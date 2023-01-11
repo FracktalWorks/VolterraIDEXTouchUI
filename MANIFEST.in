@@ -1,6 +1,6 @@
 include README.md
-recursive-include octoprint_Volterra_IDEXTouchUI/templates *
-recursive-include octoprint_Volterra_IDEXTouchUI/config *
-recursive-include octoprint_Volterra_IDEXTouchUI/gcode *
+recursive-include octoprint_VolterraIDEXTouchUI/templates *
+recursive-include octoprint_VolterraIDEXTouchUI/config *
+recursive-include octoprint_VolterraIDEXTouchUI/gcode *
 include versioneer.py
-include octoprint_Volterra_IDEXTouchUI/_version.py
+include octoprint_VolterraIDEXTouchUI/_version.py
