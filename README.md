@@ -1,10 +1,11 @@
-# IdexTouchUI
+# Volterra_IdexTouchUI
 > This respository contains the step-by-step guide to configure the touch UI of Idex machine ,including files used and links 
 ---
 
 ## OCTOprint TOUCHUI configuration 
 * Refer this documentation for the intial setup of the Touch ui in RaspberryPI octoprint server [Julia-Touch-UI-Documentation](https://github.com/FracktalWorks/Julia-Touch-UI-Documentation)
-
+                                                                                                                              
+                                                                                                                                         
 ## Configuring the ``` Waveshare 5 inch display ``` to the Raspbery PI octoprint server
 * Connect the waveshare 5 inch display to the raspberry pi HDMI port
 > **Note :**
