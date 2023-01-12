@@ -12,16 +12,6 @@ api:
 appearance:
   name: VolterraIDEX 
 plugins:
-  Julia2018FilamentSensor:
-    _config_version: 2
-    contact_door: '0'
-    contact_extruder0: '0'
-    contact_extruder1: '0'
-    enabled_door: '0'
-    enabled_extruder0: '0'
-    enabled_extruder1: '0'
-    pause_print: '1'
-    sensor_enabled: '1'
   Julia2018PrintRestore:
     _config_version: 2
   JuliaTowerLight:
