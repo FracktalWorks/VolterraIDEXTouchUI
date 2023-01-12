@@ -417,7 +417,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         self.menuButton.pressed.connect(lambda: self.stackedWidget.setCurrentWidget(self.MenuPage))
         self.controlButton.pressed.connect(self.control)
         self.playPauseButton.clicked.connect(self.playPauseAction)
-        self.doorLockButton.clicked.connect(self.doorLock)
+      
 
         # MenuScreen
         self.menuBackButton.pressed.connect(lambda: self.stackedWidget.setCurrentWidget(self.homePage))
