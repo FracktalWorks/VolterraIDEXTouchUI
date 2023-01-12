@@ -217,6 +217,10 @@ This is the main python file that acts a backend for the touch UI as it process 
 
 * Check this documentation for geting started wth octoprint plugins & configuring the setup.py , _init_.py and the basic setup of the plugin : https://docs.octoprint.org/en/master/plugins/gettingstarted.html
 
+## Changing the name of the Octoprint server to VolterraIDEX
+
+> open the ```config.yaml``` and in that change the ```appearance : VOlterra IDEX``` and change the ```model: Fracktal Works VOlterra IDex series & name : volterra IDEX```
+
 * Check this documentaion for the development of the plugins in octoprint : https://docs.octoprint.org/en/master/plugins/index.html 
 
 * Check with ```setup.py```, ```versioneer.py```, ```_init_.py```, ```MANIFESTATION.in``` , ```setup.cfg``` etc., other files what so ever are applicable for the project.
