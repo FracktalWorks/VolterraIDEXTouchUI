@@ -345,7 +345,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             self.setNewToolZOffsetFromCurrentZBool = False
             self.setActiveExtruder(0)
 
-            self.dialog_doorlock = None
+            # self.dialog_doorlock = None
             self.dialog_filamentsensor = None
 
 
@@ -1703,7 +1703,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             self.changeFilamentButton.setDisabled(True)
             self.menuCalibrateButton.setDisabled(True)
             self.menuPrintButton.setDisabled(True)
-            self.doorLockButton.setDisabled(False)
+            # self.doorLockButton.setDisabled(False)
 
         elif status == "Paused":
             self.playPauseButton.setChecked(False)
@@ -1712,7 +1712,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             self.changeFilamentButton.setDisabled(False)
             self.menuCalibrateButton.setDisabled(True)
             self.menuPrintButton.setDisabled(True)
-            self.doorLockButton.setDisabled(True)
+            # self.doorLockButton.setDisabled(True)
 
         else:
             self.stopButton.setDisabled(True)
@@ -1721,7 +1721,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             self.changeFilamentButton.setDisabled(False)
             self.menuCalibrateButton.setDisabled(False)
             self.menuPrintButton.setDisabled(False)
-            self.doorLockButton.setDisabled(True)
+            # self.doorLockButton.setDisabled(True)
 
     ''' ++++++++++++++++++++++++++++Active Extruder/Tool Change++++++++++++++++++++++++ '''
 
