@@ -10,7 +10,7 @@ api:
   allowCrossOrigin: true
   key: B508534ED20348F090B4D0AD637D3660
 appearance:
-  name: Volterra IDEX 
+  name: VolterraIDEX 
 plugins:
   Julia2018FilamentSensor:
     _config_version: 2
@@ -112,8 +112,8 @@ printerProfiles:
       sharedNozzle: false
     heatedBed: true
     id: _default
-    model: Fracktal Works Volterra Series
-    name: Volterra Idex
+    model: Fracktal Works Volterra Idex Series
+    name: VolterraIdex
     volume:
       custom_box: false
       depth: 400.0

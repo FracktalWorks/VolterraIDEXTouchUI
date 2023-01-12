@@ -20,7 +20,7 @@ plugin_version = versioneer.get_version()   # replaced by versioneer
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via __plugin_description__ in the plugin
 # module
-plugin_description = """TouchScreen Plugin for Volterra Idex touch UI """
+plugin_description = """TouchScreen Plugin for Volterra Idex 2023 """
 
 # The plugin's author. Can be overwritten within OctoPrint's internal data via __plugin_author__ in the plugin module
 plugin_author = "sivasanthosh"
