@@ -1528,9 +1528,9 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         if temperature['tool0Target'] == 0:
             self.tool0TempBar.setMaximum(300)
             self.tool0TempBar.setStyleSheet(styles.bar_heater_cold)
-        elif temperature['tool0Actual'] <= temperature['tool0Target']:
-            self.tool0TempBar.setMaximum(temperature['tool0Target'])
-            self.tool0TempBar.setStyleSheet(styles.bar_heater_heating)
+        # elif temperature['tool0Actual'] <= temperature['tool0Target']:
+        #     self.tool0TempBar.setMaximum(temperature['tool0Target'])
+        #     self.tool0TempBar.setStyleSheet(styles.bar_heater_heating)
         else:
             self.tool0TempBar.setMaximum(temperature['tool0Actual'])
         self.tool0TempBar.setValue(temperature['tool0Actual'])
@@ -1587,6 +1587,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
 
 
         # updates the progress bar on the change filament screen
+        
         if self.changeFilamentHeatingFlag:
             if self.activeExtruder == 0:
                 if temperature['tool0Target'] == 0:
