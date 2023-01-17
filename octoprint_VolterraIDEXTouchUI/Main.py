@@ -345,7 +345,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             self.setNewToolZOffsetFromCurrentZBool = False
             self.setActiveExtruder(0)
 
-            # self.dialog_doorlock = None
+            self.dialog_doorlock = None
             self.dialog_filamentsensor = None
 
 
@@ -417,7 +417,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         self.menuButton.pressed.connect(lambda: self.stackedWidget.setCurrentWidget(self.MenuPage))
         self.controlButton.pressed.connect(self.control)
         self.playPauseButton.clicked.connect(self.playPauseAction)
-      
+        self.doorLockButton.clicked.connect(self.doorLock)
 
         # MenuScreen
         self.menuBackButton.pressed.connect(lambda: self.stackedWidget.setCurrentWidget(self.homePage))
@@ -541,9 +541,11 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         self.setChamberTempButton.pressed.connect(lambda: octopiclient.gcode(command='M104 T2 S' + str(self.chamberTempSpinBox.value())))
         self.chamber40PreheatButton.pressed.connect(lambda: octopiclient.gcode(command='M104 T2 S40'))
         self.chamber70PreheatButton.pressed.connect(lambda: octopiclient.gcode(command='M041 T2 S70'))
+
         # self.setFilboxTempButton.pressed.connect(lambda: octopiclient.gcode(command='M104 T3 S' + str(self.filboxTempSpinBox.value())))
         # self.filbox30PreheatButton.pressed.connect(lambda: octopiclient.gcode(command='M104 T3 S30'))
         # self.filbox40PreheatButton.pressed.connect(lambda: octopiclient.gcode(command='M104 T3 S40'))
+        
         self.setFlowRateButton.pressed.connect(lambda: octopiclient.flowrate(self.flowRateSpinBox.value()))
         self.setFeedRateButton.pressed.connect(lambda: octopiclient.feedrate(self.feedRateSpinBox.value()))
 
@@ -786,56 +788,56 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
 
     ''' +++++++++++++++++++++++++++ Volterra VAS +++++++++++++++++++++++++++++++++++++ '''
 
-    # def doorLock(self):
-    #     '''
-    #     function that toggles locking and unlocking the front door
-    #     :return:
-    #     '''
-    #     octopiclient.overrideDoorLock()
+    def doorLock(self):
+        '''
+        function that toggles locking and unlocking the front door
+        :return:
+        '''
+        octopiclient.overrideDoorLock()
 
-    # def doorLockMsg(self, data):
-    #     if "msg" not in data:
-    #         return
+    def doorLockMsg(self, data):
+        if "msg" not in data:
+            return
 
-    #     msg = data["msg"]
+        msg = data["msg"]
 
-    #     if self.dialog_doorlock:
-    #         self.dialog_doorlock.close()
-    #         self.dialog_doorlock = None
+        if self.dialog_doorlock:
+            self.dialog_doorlock.close()
+            self.dialog_doorlock = None
 
-    #     if msg is not None:
-    #         self.dialog_doorlock = dialog.dialog(self, msg, icon="exclamation-mark.png")
-    #         if self.dialog_doorlock.exec_() == QtGui.QMessageBox.Ok:
-    #             self.dialog_doorlock = None
-    #             return
+        if msg is not None:
+            self.dialog_doorlock = dialog.dialog(self, msg, icon="exclamation-mark.png")
+            if self.dialog_doorlock.exec_() == QtGui.QMessageBox.Ok:
+                self.dialog_doorlock = None
+                return
 
-    # def doorLockHandler(self, data):
-    #     door_lock_disabled = False
-    #     door_lock = False
-    #     # door_sensor = False
-    #     # door_lock_override = False
+    def doorLockHandler(self, data):
+        door_lock_disabled = False
+        door_lock = False
+        # door_sensor = False
+        # door_lock_override = False
 
-    #     if 'door_lock' in data:
-    #         door_lock_disabled = data["door_lock"] == "disabled"
-    #         door_lock = data["door_lock"] == 1
-    #     # if 'door_sensor' in data:
-    #     #     door_sensor = data["door_sensor"] == 1
-    #     # if 'door_lock_override' in data:
-    #     #     door_lock_override = data["door_lock_override"] == 1
+        if 'door_lock' in data:
+            door_lock_disabled = data["door_lock"] == "disabled"
+            door_lock = data["door_lock"] == 1
+        # if 'door_sensor' in data:
+        #     door_sensor = data["door_sensor"] == 1
+        # if 'door_lock_override' in data:
+        #     door_lock_override = data["door_lock_override"] == 1
 
-    #     # if self.dialog_doorlock:
-    #     #     self.dialog_doorlock.close()
-    #     #     self.dialog_doorlock = None
+        # if self.dialog_doorlock:
+        #     self.dialog_doorlock.close()
+        #     self.dialog_doorlock = None
 
-    #     self.doorLockButton.setVisible(not door_lock_disabled)
-    #     if not door_lock_disabled:
-    #         # self.doorLockButton.setChecked(not door_lock)
-    #         self.doorLockButton.setText('Lock Door' if not door_lock else 'Unlock Door')
+        self.doorLockButton.setVisible(not door_lock_disabled)
+        if not door_lock_disabled:
+            # self.doorLockButton.setChecked(not door_lock)
+            self.doorLockButton.setText('Lock Door' if not door_lock else 'Unlock Door')
 
-    #         icon = 'doorLock' if not door_lock else 'doorUnlock'
-    #         self.doorLockButton.setIcon(QtGui.QIcon(_fromUtf8("templates/img/" + icon + ".png")))
-    #     else:
-    #         return
+            icon = 'doorLock' if not door_lock else 'doorUnlock'
+            self.doorLockButton.setIcon(QtGui.QIcon(_fromUtf8("templates/img/" + icon + ".png")))
+        else:
+            return
 
     ''' +++++++++++++++++++++++++++ Firmware Update+++++++++++++++++++++++++++++++++++ '''
 
@@ -1525,107 +1527,53 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         :param temperature: dict containing key:value pairs with keys being the tools, bed and their values being their corresponding temperratures
         '''
 
-        try:
-            if temperature['tool0Target'] == 0:
-                  self.tool0TempBar.setMaximum(300)
-                  self.tool0TempBar.setStyleSheet(styles.bar_heater_cold)
-            
-            elif temperature['tool0Actual'] <= temperature['tool0Target']:
-                  self.tool0TempBar.setMaximum(temperature['tool0Target'])
-                  self.tool0TempBar.setStyleSheet(styles.bar_heater_heating)
+        if temperature['tool0Target'] == 0:
+            self.tool0TempBar.setMaximum(300)
+            self.tool0TempBar.setStyleSheet(styles.bar_heater_cold)
+        elif temperature['tool0Actual'] <= temperature['tool0Target']:
+            self.tool0TempBar.setMaximum(temperature['tool0Target'])
+            self.tool0TempBar.setStyleSheet(styles.bar_heater_heating)
+        else:
+            self.tool0TempBar.setMaximum(temperature['tool0Actual'])
+        self.tool0TempBar.setValue(temperature['tool0Actual'])
+        self.tool0ActualTemperature.setText(str(int(temperature['tool0Actual'])))  # + unichr(176)
+        self.tool0TargetTemperature.setText(str(int(temperature['tool0Target'])))
 
-            else:
-                  self.tool0TempBar.setMaximum(temperature['tool0Actual'])
-            self.tool0TempBar.setValue(temperature['tool0Actual'])
-            self.tool0ActualTemperature.setText(str(int(temperature['tool0Actual'])))  # + unichr(176)
-            self.tool0TargetTemperature.setText(str(int(temperature['tool0Target'])))
+        if temperature['tool1Target'] == 0:
+            self.tool1TempBar.setMaximum(300)
+            self.tool1TempBar.setStyleSheet(styles.bar_heater_cold)
+        elif temperature['tool1Actual'] <= temperature['tool0Target']:
+            self.tool1TempBar.setMaximum(temperature['tool0Target'])
+            self.tool1TempBar.setStyleSheet(styles.bar_heater_heating)
+        else:
+            self.tool1TempBar.setMaximum(temperature['tool1Actual'])
+        self.tool1TempBar.setValue(temperature['tool1Actual'])
+        self.tool1ActualTemperature.setText(str(int(temperature['tool1Actual'])))  # + unichr(176)
+        self.tool1TargetTemperature.setText(str(int(temperature['tool1Target'])))
 
-        except:
-            if temperature['tool0Target'] == 0:
-                  self.tool0TempBar.setMaximum(300)
-                  self.tool0TempBar.setStyleSheet(styles.bar_heater_cold)
+        if temperature['bedTarget'] == 0:
+            self.bedTempBar.setMaximum(150)
+            self.bedTempBar.setStyleSheet(styles.bar_heater_cold)
+        elif temperature['bedActual'] <= temperature['bedTarget']:
+            self.bedTempBar.setMaximum(temperature['bedTarget'])
+            self.bedTempBar.setStyleSheet(styles.bar_heater_heating)
+        else:
+            self.bedTempBar.setMaximum(temperature['bedActual'])
+        self.bedTempBar.setValue(temperature['bedActual'])
+        self.bedActualTemperatute.setText(str(int(temperature['bedActual'])))  # + unichr(176))
+        self.bedTargetTemperature.setText(str(int(temperature['bedTarget'])))  # + unichr(176))
 
-            else:
-                  self.tool0TempBar.setMaximum(temperature['tool0Actual'])
-            self.tool0TempBar.setValue(temperature['tool0Actual'])
-            self.tool0ActualTemperature.setText(str(int(temperature['tool0Actual'])))  # + unichr(176)
-        
-
-
-
-        try:
-            if temperature['tool1Target'] == 0:
-                self.tool1TempBar.setMaximum(300)
-                self.tool1TempBar.setStyleSheet(styles.bar_heater_cold)
-            elif temperature['tool1Actual'] <= temperature['tool0Target']:
-                self.tool1TempBar.setMaximum(temperature['tool0Target'])
-                self.tool1TempBar.setStyleSheet(styles.bar_heater_heating)
-            
-            else:
-                self.tool1TempBar.setMaximum(temperature['tool1Actual'])
-            self.tool1TempBar.setValue(temperature['tool1Actual'])
-            self.tool1ActualTemperature.setText(str(int(temperature['tool1Actual'])))  # + unichr(176)
-            self.tool1TargetTemperature.setText(str(int(temperature['tool1Target'])))
-        except:
-            if temperature['tool1Target'] == 0:
-                self.tool1TempBar.setMaximum(300)
-                self.tool1TempBar.setStyleSheet(styles.bar_heater_cold)
-            else:
-                self.tool1TempBar.setMaximum(temperature['tool1Actual'])
-    
-            self.tool1ActualTemperature.setText(str(int(temperature['tool1Actual'])))  # + unichr(176)
-            self.tool1TargetTemperature.setText(str(int(temperature['tool1Target'])))
-            
-
-        try:
-            if temperature['bedTarget'] == 0:
-                self.bedTempBar.setMaximum(150)
-                self.bedTempBar.setStyleSheet(styles.bar_heater_cold)
-
-            elif temperature['bedActual'] <= temperature['bedTarget']:
-                self.bedTempBar.setMaximum(temperature['bedTarget'])
-                self.bedTempBar.setStyleSheet(styles.bar_heater_heating)
-
-            else:
-                self.bedTempBar.setMaximum(temperature['bedActual'])
-            self.bedTempBar.setValue(temperature['bedActual'])
-            self.bedActualTemperatute.setText(str(int(temperature['bedActual'])))  # + unichr(176))
-            self.bedTargetTemperature.setText(str(int(temperature['bedTarget'])))  # + unichr(176))
-        except:
-            if temperature['bedTarget'] == 0:
-                self.bedTempBar.setMaximum(150)
-                self.bedTempBar.setStyleSheet(styles.bar_heater_cold)
-
-            else:
-                self.bedTempBar.setMaximum(temperature['bedActual'])
-            self.bedActualTemperatute.setText(str(int(temperature['bedActual'])))  # + unichr(176))
-            self.bedTargetTemperature.setText(str(int(temperature['bedTarget'])))  # + unichr(176))
-        
-        try:
-            if temperature['chamberTarget'] == 0:
-                self.chamberTempBar.setMaximum(70)
-                self.chamberTempBar.setStyleSheet(styles.bar_heater_cold)
-            
-            elif temperature['chamberActual'] <= temperature['chamberTarget']:
-                self.chamberTempBar.setMaximum(temperature['chamberTarget'])
-                self.chamberTempBar.setStyleSheet(styles.bar_heater_heating)
-            else:
-                self.chamberTempBar.setMaximum(temperature['chamberActual'])
-            self.chamberTempBar.setValue(temperature['chamberActual'])
-            self.chamberActualTemperatute.setText(str(int(temperature['chamberActual'])))  # + unichr(176))
-            self.chamberTargetTemperature.setText(str(int(temperature['chamberTarget'])))  # + unichr(176))
-        except:
-            if temperature['chamberTarget'] == 0:
-                self.chamberTempBar.setMaximum(70)
-                self.chamberTempBar.setStyleSheet(styles.bar_heater_cold)
-            else:
-                self.chamberTempBar.setMaximum(temperature['chamberActual'])
-
-            self.chamberActualTemperatute.setText(str(int(temperature['chamberActual'])))  # + unichr(176))
-            self.chamberTargetTemperature.setText(str(int(temperature['chamberTarget'])))  # + unichr(176))
-
-
-
+        if temperature['chamberTarget'] == 0:
+            self.chamberTempBar.setMaximum(70)
+            self.chamberTempBar.setStyleSheet(styles.bar_heater_cold)
+        elif temperature['chamberActual'] <= temperature['chamberTarget']:
+            self.chamberTempBar.setMaximum(temperature['chamberTarget'])
+            self.chamberTempBar.setStyleSheet(styles.bar_heater_heating)
+        else:
+            self.chamberTempBar.setMaximum(temperature['chamberActual'])
+        self.chamberTempBar.setValue(temperature['chamberActual'])
+        self.chamberActualTemperatute.setText(str(int(temperature['chamberActual'])))  # + unichr(176))
+        self.chamberTargetTemperature.setText(str(int(temperature['chamberTarget'])))  # + unichr(176))
 
         # if temperature['filboxTarget'] == 0:
         #     self.filboxTempBar.setMaximum(50)
@@ -1641,7 +1589,6 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
 
 
         # updates the progress bar on the change filament screen
-        
         if self.changeFilamentHeatingFlag:
             if self.activeExtruder == 0:
                 if temperature['tool0Target'] == 0:
@@ -1758,7 +1705,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             self.changeFilamentButton.setDisabled(True)
             self.menuCalibrateButton.setDisabled(True)
             self.menuPrintButton.setDisabled(True)
-            # self.doorLockButton.setDisabled(False)
+            self.doorLockButton.setDisabled(False)
 
         elif status == "Paused":
             self.playPauseButton.setChecked(False)
@@ -1767,7 +1714,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             self.changeFilamentButton.setDisabled(False)
             self.menuCalibrateButton.setDisabled(True)
             self.menuPrintButton.setDisabled(True)
-            # self.doorLockButton.setDisabled(True)
+            self.doorLockButton.setDisabled(True)
 
         else:
             self.stopButton.setDisabled(True)
@@ -1776,7 +1723,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             self.changeFilamentButton.setDisabled(False)
             self.menuCalibrateButton.setDisabled(False)
             self.menuPrintButton.setDisabled(False)
-            # self.doorLockButton.setDisabled(True)
+            self.doorLockButton.setDisabled(True)
 
     ''' ++++++++++++++++++++++++++++Active Extruder/Tool Change++++++++++++++++++++++++ '''
 
@@ -2331,10 +2278,7 @@ class QtWebsocket(QtCore.QThread):
                                     'bedActual': temp(data, "bed", "actual"),
                                     'bedTarget': temp(data, "bed", "target"),
                                     'chamberActual': temp(data, "tool2", "actual"),
-                                    'chamberTarget': temp(data, "tool2", "target"),
-                                    # 'filboxActual': temp(data, "tool3", "actual"),
-                                    # 'filboxTarget': temp(data, "tool3", "target") 
-                                    }
+                                    'chamberTarget': temp(data, "tool2", "target"),}
                     self.temperatures_signal.emit(temperatures)
                 except Exception as e:
                     print("error: " + str(e))
