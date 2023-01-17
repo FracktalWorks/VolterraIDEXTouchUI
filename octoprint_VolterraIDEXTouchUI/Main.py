@@ -1572,7 +1572,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
                 self.tool1TempBar.setStyleSheet(styles.bar_heater_cold)
             else:
                 self.tool1TempBar.setMaximum(temperature['tool1Actual'])
-            self.tool1TempBar.setValue(temperature['tool1Actual'])
+    
             self.tool1ActualTemperature.setText(str(int(temperature['tool1Actual'])))  # + unichr(176)
             self.tool1TargetTemperature.setText(str(int(temperature['tool1Target'])))
             
@@ -1581,9 +1581,11 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             if temperature['bedTarget'] == 0:
                 self.bedTempBar.setMaximum(150)
                 self.bedTempBar.setStyleSheet(styles.bar_heater_cold)
+
             elif temperature['bedActual'] <= temperature['bedTarget']:
                 self.bedTempBar.setMaximum(temperature['bedTarget'])
                 self.bedTempBar.setStyleSheet(styles.bar_heater_heating)
+
             else:
                 self.bedTempBar.setMaximum(temperature['bedActual'])
             self.bedTempBar.setValue(temperature['bedActual'])
@@ -1593,9 +1595,9 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             if temperature['bedTarget'] == 0:
                 self.bedTempBar.setMaximum(150)
                 self.bedTempBar.setStyleSheet(styles.bar_heater_cold)
+
             else:
                 self.bedTempBar.setMaximum(temperature['bedActual'])
-            self.bedTempBar.setValue(temperature['bedActual'])
             self.bedActualTemperatute.setText(str(int(temperature['bedActual'])))  # + unichr(176))
             self.bedTargetTemperature.setText(str(int(temperature['bedTarget'])))  # + unichr(176))
         
@@ -1618,7 +1620,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
                 self.chamberTempBar.setStyleSheet(styles.bar_heater_cold)
             else:
                 self.chamberTempBar.setMaximum(temperature['chamberActual'])
-            self.chamberTempBar.setValue(temperature['chamberActual'])
+
             self.chamberActualTemperatute.setText(str(int(temperature['chamberActual'])))  # + unichr(176))
             self.chamberTargetTemperature.setText(str(int(temperature['chamberTarget'])))  # + unichr(176))
 
