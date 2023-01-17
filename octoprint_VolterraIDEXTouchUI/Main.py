@@ -1577,29 +1577,53 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             self.tool1TargetTemperature.setText(str(int(temperature['tool1Target'])))
             
 
-        if temperature['bedTarget'] == 0:
-            self.bedTempBar.setMaximum(150)
-            self.bedTempBar.setStyleSheet(styles.bar_heater_cold)
-        elif temperature['bedActual'] <= temperature['bedTarget']:
-            self.bedTempBar.setMaximum(temperature['bedTarget'])
-            self.bedTempBar.setStyleSheet(styles.bar_heater_heating)
-        else:
-            self.bedTempBar.setMaximum(temperature['bedActual'])
-        self.bedTempBar.setValue(temperature['bedActual'])
-        self.bedActualTemperatute.setText(str(int(temperature['bedActual'])))  # + unichr(176))
-        self.bedTargetTemperature.setText(str(int(temperature['bedTarget'])))  # + unichr(176))
+        try:
+            if temperature['bedTarget'] == 0:
+                self.bedTempBar.setMaximum(150)
+                self.bedTempBar.setStyleSheet(styles.bar_heater_cold)
+            elif temperature['bedActual'] <= temperature['bedTarget']:
+                self.bedTempBar.setMaximum(temperature['bedTarget'])
+                self.bedTempBar.setStyleSheet(styles.bar_heater_heating)
+            else:
+                self.bedTempBar.setMaximum(temperature['bedActual'])
+            self.bedTempBar.setValue(temperature['bedActual'])
+            self.bedActualTemperatute.setText(str(int(temperature['bedActual'])))  # + unichr(176))
+            self.bedTargetTemperature.setText(str(int(temperature['bedTarget'])))  # + unichr(176))
+        except:
+            if temperature['bedTarget'] == 0:
+                self.bedTempBar.setMaximum(150)
+                self.bedTempBar.setStyleSheet(styles.bar_heater_cold)
+            else:
+                self.bedTempBar.setMaximum(temperature['bedActual'])
+            self.bedTempBar.setValue(temperature['bedActual'])
+            self.bedActualTemperatute.setText(str(int(temperature['bedActual'])))  # + unichr(176))
+            self.bedTargetTemperature.setText(str(int(temperature['bedTarget'])))  # + unichr(176))
+        
+        try:
+            if temperature['chamberTarget'] == 0:
+                self.chamberTempBar.setMaximum(70)
+                self.chamberTempBar.setStyleSheet(styles.bar_heater_cold)
+            
+            elif temperature['chamberActual'] <= temperature['chamberTarget']:
+                self.chamberTempBar.setMaximum(temperature['chamberTarget'])
+                self.chamberTempBar.setStyleSheet(styles.bar_heater_heating)
+            else:
+                self.chamberTempBar.setMaximum(temperature['chamberActual'])
+            self.chamberTempBar.setValue(temperature['chamberActual'])
+            self.chamberActualTemperatute.setText(str(int(temperature['chamberActual'])))  # + unichr(176))
+            self.chamberTargetTemperature.setText(str(int(temperature['chamberTarget'])))  # + unichr(176))
+        except:
+            if temperature['chamberTarget'] == 0:
+                self.chamberTempBar.setMaximum(70)
+                self.chamberTempBar.setStyleSheet(styles.bar_heater_cold)
+            else:
+                self.chamberTempBar.setMaximum(temperature['chamberActual'])
+            self.chamberTempBar.setValue(temperature['chamberActual'])
+            self.chamberActualTemperatute.setText(str(int(temperature['chamberActual'])))  # + unichr(176))
+            self.chamberTargetTemperature.setText(str(int(temperature['chamberTarget'])))  # + unichr(176))
 
-        if temperature['chamberTarget'] == 0:
-            self.chamberTempBar.setMaximum(70)
-            self.chamberTempBar.setStyleSheet(styles.bar_heater_cold)
-        elif temperature['chamberActual'] <= temperature['chamberTarget']:
-            self.chamberTempBar.setMaximum(temperature['chamberTarget'])
-            self.chamberTempBar.setStyleSheet(styles.bar_heater_heating)
-        else:
-            self.chamberTempBar.setMaximum(temperature['chamberActual'])
-        self.chamberTempBar.setValue(temperature['chamberActual'])
-        self.chamberActualTemperatute.setText(str(int(temperature['chamberActual'])))  # + unichr(176))
-        self.chamberTargetTemperature.setText(str(int(temperature['chamberTarget'])))  # + unichr(176))
+
+
 
         # if temperature['filboxTarget'] == 0:
         #     self.filboxTempBar.setMaximum(50)
