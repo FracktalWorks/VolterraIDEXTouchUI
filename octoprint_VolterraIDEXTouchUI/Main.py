@@ -1535,7 +1535,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             self.tool0TempBar.setMaximum(temperature['tool0Actual'])
         self.tool0TempBar.setValue(temperature['tool0Actual'])
         self.tool0ActualTemperature.setText(str(int(temperature['tool0Actual'])))  # + unichr(176)
-        self.tool0TargetTemperature.setText(str(int(temperature['tool0Target'])))
+        # self.tool0TargetTemperature.setText(str(int(temperature['tool0Target'])))
 
         if temperature['tool1Target'] == 0:
             self.tool1TempBar.setMaximum(300)
