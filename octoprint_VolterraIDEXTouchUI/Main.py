@@ -1525,17 +1525,35 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         :param temperature: dict containing key:value pairs with keys being the tools, bed and their values being their corresponding temperratures
         '''
 
-        if temperature['tool0Target'] == 0:
-            self.tool0TempBar.setMaximum(300)
-            self.tool0TempBar.setStyleSheet(styles.bar_heater_cold)
-        # elif temperature['tool0Actual'] <= temperature['tool0Target']:
-        #     self.tool0TempBar.setMaximum(temperature['tool0Target'])
-        #     self.tool0TempBar.setStyleSheet(styles.bar_heater_heating)
-        else:
-            self.tool0TempBar.setMaximum(temperature['tool0Actual'])
-        self.tool0TempBar.setValue(temperature['tool0Actual'])
-        self.tool0ActualTemperature.setText(str(int(temperature['tool0Actual'])))  # + unichr(176)
-        # self.tool0TargetTemperature.setText(str(int(temperature['tool0Target'])))
+        try:
+            if temperature['tool0Target'] == 0:
+                  self.tool0TempBar.setMaximum(300)
+                  self.tool0TempBar.setStyleSheet(styles.bar_heater_cold)
+            
+            elif temperature['tool0Actual'] <= temperature['tool0Target']:
+                  self.tool0TempBar.setMaximum(temperature['tool0Target'])
+                  self.tool0TempBar.setStyleSheet(styles.bar_heater_heating)
+
+            else:
+                  self.tool0TempBar.setMaximum(temperature['tool0Actual'])
+            self.tool0TempBar.setValue(temperature['tool0Actual'])
+            self.tool0ActualTemperature.setText(str(int(temperature['tool0Actual'])))  # + unichr(176)
+            self.tool0TargetTemperature.setText(str(int(temperature['tool0Target'])))
+
+        except:
+            if temperature['tool0Target'] == 0:
+                  self.tool0TempBar.setMaximum(300)
+                  self.tool0TempBar.setStyleSheet(styles.bar_heater_cold)
+
+            else:
+                  self.tool0TempBar.setMaximum(temperature['tool0Actual'])
+            self.tool0TempBar.setValue(temperature['tool0Actual'])
+            self.tool0ActualTemperature.setText(str(int(temperature['tool0Actual'])))  # + unichr(176)
+        
+
+
+
+        
 
         if temperature['tool1Target'] == 0:
             self.tool1TempBar.setMaximum(300)
