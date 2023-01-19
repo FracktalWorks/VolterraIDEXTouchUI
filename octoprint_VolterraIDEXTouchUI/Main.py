@@ -5,7 +5,7 @@
  *
  * Fracktal Works
  * __________________
- * Authors: Vijay Varada
+ * Authors: sivasanthosh
  * Created: Nov 2016
  *
  * Licence: AGPLv3
@@ -113,10 +113,10 @@ filaments = OrderedDict(filaments)
 #                        'X4': 185, 'Y4': 42
 #                        }
 
-calibrationPosition = {'X1': 336, 'Y1': 33,
-                       'X2': 27, 'Y2': 33,
-                       'X3': 183, 'Y3': 343,
-                       'X4': 183, 'Y4': 33
+calibrationPosition = {'X1': 77, 'Y1': 33,
+                       'X2': 213, 'Y2': 33,
+                       'X3': 145, 'Y3': 186,
+                       'X4': 145, 'Y4': 100
                        }
 
 try:
@@ -345,7 +345,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             self.setNewToolZOffsetFromCurrentZBool = False
             self.setActiveExtruder(0)
 
-            self.dialog_doorlock = None
+           
             self.dialog_filamentsensor = None
 
 
@@ -363,7 +363,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
 
     def proceed(self):
         '''
-        Startes websocket, as well as initialises button actions and callbacks. THis is done in such a manner so that the callbacks that dnepend on websockets
+        Startes websocket, as well as initialises button actions and callbacks. THis is done in such a manner so that the callbacks that depend on websockets
         load only after the socket is available which in turn is dependent on the server being available which is checked in the sanity check thread
         '''
         self.QtSocket = QtWebsocket()
@@ -417,7 +417,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         self.menuButton.pressed.connect(lambda: self.stackedWidget.setCurrentWidget(self.MenuPage))
         self.controlButton.pressed.connect(self.control)
         self.playPauseButton.clicked.connect(self.playPauseAction)
-        self.doorLockButton.clicked.connect(self.doorLock)
+       
 
         # MenuScreen
         self.menuBackButton.pressed.connect(lambda: self.stackedWidget.setCurrentWidget(self.homePage))
@@ -538,19 +538,15 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         self.setBedTempButton.pressed.connect(lambda: octopiclient.setBedTemperature(self.bedTempSpinBox.value()))
         self.bed60PreheatButton.pressed.connect(lambda: octopiclient.setBedTemperature(target=60))
         self.bed100PreheatButton.pressed.connect(lambda: octopiclient.setBedTemperature(target=100))
-        self.setChamberTempButton.pressed.connect(lambda: octopiclient.gcode(command='M104 T2 S' + str(self.chamberTempSpinBox.value())))
-        self.chamber40PreheatButton.pressed.connect(lambda: octopiclient.gcode(command='M104 T2 S40'))
-        self.chamber70PreheatButton.pressed.connect(lambda: octopiclient.gcode(command='M041 T2 S70'))
 
-        # self.setFilboxTempButton.pressed.connect(lambda: octopiclient.gcode(command='M104 T3 S' + str(self.filboxTempSpinBox.value())))
-        # self.filbox30PreheatButton.pressed.connect(lambda: octopiclient.gcode(command='M104 T3 S30'))
-        # self.filbox40PreheatButton.pressed.connect(lambda: octopiclient.gcode(command='M104 T3 S40'))
-        
+
+
+
         self.setFlowRateButton.pressed.connect(lambda: octopiclient.flowrate(self.flowRateSpinBox.value()))
         self.setFeedRateButton.pressed.connect(lambda: octopiclient.feedrate(self.feedRateSpinBox.value()))
 
-        self.moveZPBabyStep.pressed.connect(lambda: octopiclient.gcode(command='M290 Z0.025'))
-        self.moveZMBabyStep.pressed.connect(lambda: octopiclient.gcode(command='M290 Z-0.025'))
+        self.moveZPBabyStep.pressed.connect(lambda: octopiclient.gcode(command='SET_GCODE_OFFSET Z_ADJUST=0.025 MOVE=1')) #
+        self.moveZMBabyStep.pressed.connect(lambda: octopiclient.gcode(command='SET_GCODE_OFFSET Z_ADJUST=-0.025 MOVE=1')) #
 
         # ChangeFilament rutien
         self.changeFilamentButton.pressed.connect(self.changeFilament)
@@ -786,58 +782,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
                 if dialog.WarningOk(self, "Door opened"):
                     return
 
-    ''' +++++++++++++++++++++++++++ Volterra VAS +++++++++++++++++++++++++++++++++++++ '''
-
-    def doorLock(self):
-        '''
-        function that toggles locking and unlocking the front door
-        :return:
-        '''
-        octopiclient.overrideDoorLock()
-
-    def doorLockMsg(self, data):
-        if "msg" not in data:
-            return
-
-        msg = data["msg"]
-
-        if self.dialog_doorlock:
-            self.dialog_doorlock.close()
-            self.dialog_doorlock = None
-
-        if msg is not None:
-            self.dialog_doorlock = dialog.dialog(self, msg, icon="exclamation-mark.png")
-            if self.dialog_doorlock.exec_() == QtGui.QMessageBox.Ok:
-                self.dialog_doorlock = None
-                return
-
-    def doorLockHandler(self, data):
-        door_lock_disabled = False
-        door_lock = False
-        # door_sensor = False
-        # door_lock_override = False
-
-        if 'door_lock' in data:
-            door_lock_disabled = data["door_lock"] == "disabled"
-            door_lock = data["door_lock"] == 1
-        # if 'door_sensor' in data:
-        #     door_sensor = data["door_sensor"] == 1
-        # if 'door_lock_override' in data:
-        #     door_lock_override = data["door_lock_override"] == 1
-
-        # if self.dialog_doorlock:
-        #     self.dialog_doorlock.close()
-        #     self.dialog_doorlock = None
-
-        self.doorLockButton.setVisible(not door_lock_disabled)
-        if not door_lock_disabled:
-            # self.doorLockButton.setChecked(not door_lock)
-            self.doorLockButton.setText('Lock Door' if not door_lock else 'Unlock Door')
-
-            icon = 'doorLock' if not door_lock else 'doorUnlock'
-            self.doorLockButton.setIcon(QtGui.QIcon(_fromUtf8("templates/img/" + icon + ".png")))
-        else:
-            return
+    ''' +++++++++++++++++++++++++++ IDEX VAS +++++++++++++++++++++++++++++++++++++ '''
 
     ''' +++++++++++++++++++++++++++ Firmware Update+++++++++++++++++++++++++++++++++++ '''
 
@@ -1563,29 +1508,9 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         self.bedActualTemperatute.setText(str(int(temperature['bedActual'])))  # + unichr(176))
         self.bedTargetTemperature.setText(str(int(temperature['bedTarget'])))  # + unichr(176))
 
-        if temperature['chamberTarget'] == 0:
-            self.chamberTempBar.setMaximum(70)
-            self.chamberTempBar.setStyleSheet(styles.bar_heater_cold)
-        elif temperature['chamberActual'] <= temperature['chamberTarget']:
-            self.chamberTempBar.setMaximum(temperature['chamberTarget'])
-            self.chamberTempBar.setStyleSheet(styles.bar_heater_heating)
-        else:
-            self.chamberTempBar.setMaximum(temperature['chamberActual'])
-        self.chamberTempBar.setValue(temperature['chamberActual'])
-        self.chamberActualTemperatute.setText(str(int(temperature['chamberActual'])))  # + unichr(176))
-        self.chamberTargetTemperature.setText(str(int(temperature['chamberTarget'])))  # + unichr(176))
 
-        # if temperature['filboxTarget'] == 0:
-        #     self.filboxTempBar.setMaximum(50)
-        #     self.filboxTempBar.setStyleSheet(styles.bar_heater_cold)
-        # elif temperature['filboxActual'] <= temperature['filboxTarget']:
-        #     self.filboxTempBar.setMaximum(temperature['filboxTarget'])
-        #     self.filboxTempBar.setStyleSheet(styles.bar_heater_heating)
-        # else:
-        #     self.filboxTempBar.setMaximum(temperature['filboxActual'])
-        # self.filboxTempBar.setValue(temperature['filboxActual'])
-        # self.filboxActualTemperatute.setText(str(int(temperature['filboxActual'])))  # + unichr(176))
-        # self.filboxTargetTemperature.setText(str(int(temperature['filboxTarget'])))  # + unichr(176))
+
+
 
 
         # updates the progress bar on the change filament screen
@@ -1705,7 +1630,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             self.changeFilamentButton.setDisabled(True)
             self.menuCalibrateButton.setDisabled(True)
             self.menuPrintButton.setDisabled(True)
-            self.doorLockButton.setDisabled(False)
+            
 
         elif status == "Paused":
             self.playPauseButton.setChecked(False)
@@ -1714,7 +1639,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             self.changeFilamentButton.setDisabled(False)
             self.menuCalibrateButton.setDisabled(True)
             self.menuPrintButton.setDisabled(True)
-            self.doorLockButton.setDisabled(True)
+            
 
         else:
             self.stopButton.setDisabled(True)
@@ -1723,7 +1648,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             self.changeFilamentButton.setDisabled(False)
             self.menuCalibrateButton.setDisabled(False)
             self.menuPrintButton.setDisabled(False)
-            self.doorLockButton.setDisabled(True)
+            
 
     ''' ++++++++++++++++++++++++++++Active Extruder/Tool Change++++++++++++++++++++++++ '''
 
@@ -1935,15 +1860,15 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         :return:
         '''
         self.toolZOffsetCaliberationPageCount = 0
-        octopiclient.gcode(command='M104 S200')
-        octopiclient.gcode(command='M104 T1 S200')
+        octopiclient.gcode(command='M104 S0') # BEFORE S200
+        octopiclient.gcode(command='M104 T1 S0') # BEFORE M104 T1 S200
         octopiclient.gcode(command='M211 S0')  # Disable software endstop
         octopiclient.gcode(command='T0')  # Set active tool to t0
-        octopiclient.gcode(command='M503')  # makes sure internal value of Z offset and Tool offsets are stored before erasing
+        #octopiclient.gcode(command='M503')  # makes sure internal value of Z offset and Tool offsets are stored before erasing
         octopiclient.gcode(command='M420 S0')  # Dissable mesh bed leveling for good measure
         self.stackedWidget.setCurrentWidget(self.quickStep1Page)
         octopiclient.home(['x', 'y', 'z'])
-        octopiclient.jog(x=40, y=40, absolute=True, speed=2000)
+        octopiclient.jog(x=76, y=40, absolute=True, speed=2000)
 
     def quickStep2(self):
         '''
@@ -2008,7 +1933,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         octopiclient.gcode(command='M114')
         octopiclient.jog(z=4, absolute=True, speed=1500)
         octopiclient.gcode(command='T0')
-        octopiclient.gcode(command='M211 S1')  # Disable software endstop
+        #octopiclient.gcode(command='M211 S1')  # Disable software endstop
         self.stackedWidget.setCurrentWidget(self.calibratePage)
         octopiclient.home(['x', 'y', 'z'])
         octopiclient.gcode(command='M104 S0')
@@ -2035,16 +1960,16 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
                 self.printFromPath('gcode/' + tool0Diameter + '_BedLeveling.gcode', True)
             elif gcode is 'dualCalibration':
                 self.printFromPath(
-                    'gcode/' + tool0Diameter + '_' + tool1Diameter + '_dual_extruder_calibration_Volterra.gcode',
+                    'gcode/' + tool0Diameter + '_' + tool1Diameter + '_dual_extruder_calibration_Idex.gcode',
                     True)
             elif gcode is 'movementTest':
                 self.printFromPath('gcode/movementTest.gcode', True)
             elif gcode is 'dualTest':
                 self.printFromPath(
-                    'gcode/' + tool0Diameter + '_' + tool1Diameter + '_Fracktal_logo_Volterra.gcode',
+                    'gcode/' + tool0Diameter + '_' + tool1Diameter + '_Fracktal_logo_Idex.gcode',
                     True)
             elif gcode is 'singleTest':
-                self.printFromPath('gcode/' + tool0Diameter + '_Fracktal_logo_Volterra.gcode',True)
+                self.printFromPath('gcode/' + tool0Diameter + '_Fracktal_logo_Idex.gcode',True)
 
             else:
                 print("gcode not found")
@@ -2215,7 +2140,7 @@ class QtWebsocket(QtCore.QThread):
                 self.connected_signal.emit()
                 print("connected")
         if "plugin" in data:
-            if data["plugin"]["plugin"] == 'VolterraServices':
+            if data["plugin"]["plugin"] == 'IdexServices':
                  self.filament_sensor_triggered_signal.emit(data["plugin"]["data"])
 
             if data["plugin"]["plugin"] == 'JuliaFirmwareUpdater':
@@ -2278,7 +2203,9 @@ class QtWebsocket(QtCore.QThread):
                                     'bedActual': temp(data, "bed", "actual"),
                                     'bedTarget': temp(data, "bed", "target"),
                                     'chamberActual': temp(data, "tool2", "actual"),
-                                    'chamberTarget': temp(data, "tool2", "target"),}
+                                    'chamberTarget': temp(data, "tool2", "target"),
+                                    'filboxActual': temp(data, "tool3", "actual"),
+                                    'filboxTarget': temp(data, "tool3", "target")}
                     self.temperatures_signal.emit(temperatures)
                 except Exception as e:
                     print("error: " + str(e))
@@ -2327,10 +2254,10 @@ class ThreadSanityCheck(QtCore.QThread):
                     result = [s.strip() for s in result]
                     for line in result:
                         if b'FTDI' in line:
-                            self.MKSPort = line[line.index(b'ttyUSB'):line.index(b'ttyUSB') + 7].decode('utf-8')
+                            self.MKSPort = line[line.index(b'ttyUSB'):line.index(b'tty3') + 7].decode('utf-8')
                             print(self.MKSPort)
                         if b'ch34' in line:
-                            self.MKSPort = line[line.index(b'ttyUSB'):line.index(b'ttyUSB') + 7].decode('utf-8')
+                            self.MKSPort = line[line.index(b'ttyUSB'):line.index(b'tty3') + 7].decode('utf-8')
                             print(self.MKSPort)
 
                     if not self.MKSPort:
