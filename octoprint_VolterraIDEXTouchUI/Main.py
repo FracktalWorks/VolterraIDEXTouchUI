@@ -2206,6 +2206,9 @@ class QtWebsocket(QtCore.QThread):
                                     'chamberTarget': temp(data, "tool2", "target"),
                                     'filboxActual': temp(data, "tool3", "actual"),
                                     'filboxTarget': temp(data, "tool3", "target")}
+                    for temps in temperatures.keys:
+                        if temperatures.temps is None:
+                            temperatures[temps] = 0
                     self.temperatures_signal.emit(temperatures)
                 except Exception as e:
                     print("error: " + str(e))
