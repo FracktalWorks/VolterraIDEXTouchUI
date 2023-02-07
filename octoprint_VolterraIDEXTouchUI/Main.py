@@ -42,7 +42,7 @@ import logging
 from collections import OrderedDict
 
 #for klipper
-import octoprint.plugin
+#import octoprint.plugin
 
 if not Development:
     import RPi.GPIO as GPIO
