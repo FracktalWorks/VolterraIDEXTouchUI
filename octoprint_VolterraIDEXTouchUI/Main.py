@@ -41,8 +41,6 @@ import re
 import logging
 from collections import OrderedDict
 
-#for klipper
-#import octoprint.plugin
 
 if not Development:
     import RPi.GPIO as GPIO
@@ -2334,24 +2332,6 @@ class ThreadRestartNetworking(QtCore.QThread):
         # subprocess.call(["ifdown", "--force", self.interface], shell=False)
         # subprocess.call(["ifup", "--force", self.interface], shell=False)
         time.sleep(5)
-
-class KlipperCfgUpdater(octoprint.plugin.StartupPlugin):
-    def on_after_startup(self):
-        # Get the current version of the CFG file
-        current_version = None
-        if os.path.exists("/home/pi/printer.cfg"):
-            with open("/home/pi/printer.cfg", "r") as f:
-                current_version = f.readline().strip()
-
-        # Get the latest version of the CFG file from the Git repository
-        response = requests.get("https://github.com/FracktalWorks/Klipper_CFG/raw/main/volterra_IDEX.cfg")
-        latest_version = response.text.split("\n", 1)[0].strip()
-
-        # Check if the latest version is different from the current version
-        if current_version != latest_version:
-            # Write the latest version of the CFG file to disk
-            with open("/home/pi/printer.cfg", "w") as f:
-                f.write(response.text)
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
