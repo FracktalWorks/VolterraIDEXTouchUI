@@ -1509,10 +1509,17 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         self.bedActualTemperatute.setText(str(int(temperature['bedActual'])))  # + unichr(176))
         self.bedTargetTemperature.setText(str(int(temperature['bedTarget'])))  # + unichr(176))
 
-
-
-
-
+        if temperature['chamberTarget'] == 0:
+            self.chamberTempBar.setMaximum(70)
+            self.chamberTempBar.setStyleSheet(styles.bar_heater_cold)
+        elif temperature['chamberActual'] <= temperature['chamberTarget']:
+            self.chamberTempBar.setMaximum(temperature['chamberTarget'])
+            self.chamberTempBar.setStyleSheet(styles.bar_heater_heating)
+        else:
+            self.chamberTempBar.setMaximum(temperature['chamberActual'])
+        self.chamberTempBar.setValue(temperature['chamberActual'])
+        self.chamberActualTemperatute.setText(str(int(temperature['chamberActual'])))  # + unichr(176))
+        self.chamberTargetTemperature.setText(str(int(temperature['chamberTarget'])))  # + unichr(176))
 
         # updates the progress bar on the change filament screen
         if self.changeFilamentHeatingFlag:
@@ -2203,13 +2210,12 @@ class QtWebsocket(QtCore.QThread):
                                     'tool1Target': temp(data, "tool1", "target"),
                                     'bedActual': temp(data, "bed", "actual"),
                                     'bedTarget': temp(data, "bed", "target"),
-                                    'chamberActual': temp(data, "tool2", "actual"),
-                                    'chamberTarget': temp(data, "tool2", "target"),
-                                    'filboxActual': temp(data, "tool3", "actual"),
-                                    'filboxTarget': temp(data, "tool3", "target")}
-                    for temps in temperatures.keys:
-                        if temperatures.temps is None:
-                            temperatures[temps] = 0
+                                    'chamberActual': temp(data, "chamber", "actual"),
+                                    'chamberTarget': temp(data, "chamber", "target")
+                                    }
+                    for key, value in temperatures.items():
+                        if value is None:
+                            temperatures[key] = 0
                     self.temperatures_signal.emit(temperatures)
                 except Exception as e:
                     print("error: " + str(e))
