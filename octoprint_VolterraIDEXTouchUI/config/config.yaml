@@ -10,7 +10,7 @@ api:
   allowCrossOrigin: true
   key: B508534ED20348F090B4D0AD637D3660
 appearance:
-  name: VolterraIDEX 
+  name: VolterraIDEX
 plugins:
   Julia2018PrintRestore:
     _config_version: 2
@@ -39,7 +39,7 @@ plugins:
       _octopi:
         read_until: 1646055600
       _plugins:
-        read_until: 1649134800
+        read_until: 1674453600
       _releases:
         read_until: 1642677300
     enabled_channels:
@@ -78,46 +78,15 @@ plugins:
     enabled: true
 printerProfiles:
   default: _default
-  defaultProfile:
-    axes:
-      e:
-        inverted: false
-        speed: 300
-      x:
-        inverted: false
-        speed: 6000
-      y:
-        inverted: false
-        speed: 6000
-      z:
-        inverted: false
-        speed: 200
-    color: default
-    extruder:
-      count: 2
-      nozzleDiameter: 0.6
-      offsets:
-      - - 0.0
-        - 0.0
-      sharedNozzle: false
-    heatedBed: true
-    id: _default
-    model: Fracktal Works Volterra Idex Series
-    name: VolterraIdex
-    volume:
-      custom_box: false
-      depth: 400.0
-      formFactor: rectangular
-      height: 400.0
-      origin: lowerleft
-      width: 400.0
 serial:
-  baudrate: 115200
+  additionalPorts:
+  - /tmp/printer
+  baudrate: 250000
   blacklistedPorts:
   - /dev/ttyS*
   disconnectOnErrors: false
   ignoreErrorsFromFirmware: true
-  port: /dev/ttyUSB0
+  port: /tmp/printer
 server:
   commands:
     serverRestartCommand: sudo shutdown -r now
