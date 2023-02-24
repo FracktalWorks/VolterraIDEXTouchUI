@@ -284,17 +284,23 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         self.wifiPasswordLineEdit.setObjectName(_fromUtf8("wifiPasswordLineEdit"))
 
         font.setPointSize(11)
-        self.ethStaticIpLineEdit = ClickableLineEdit(self.ethStaticSettings)
-        self.ethStaticIpLineEdit.setGeometry(QtCore.QRect(120, 10, 300, 30))
-        self.ethStaticIpLineEdit.setFont(font)
-        self.ethStaticIpLineEdit.setStyleSheet(styles.textedit)
-        self.ethStaticIpLineEdit.setObjectName(_fromUtf8("ethStaticIpLineEdit"))
+        self.staticIPLineEdit = ClickableLineEdit(self.ethStaticSettings)
+        self.staticIPLineEdit.setGeometry(QtCore.QRect(120, 10, 300, 30))
+        self.staticIPLineEdit.setFont(font)
+        self.staticIPLineEdit.setStyleSheet(styles.textedit)
+        self.staticIPLineEdit.setObjectName(_fromUtf8("staticIPIpLineEdit"))
 
-        self.ethStaticGatewayLineEdit = ClickableLineEdit(self.ethStaticSettings)
-        self.ethStaticGatewayLineEdit.setGeometry(QtCore.QRect(120, 60, 300, 30))
-        self.ethStaticGatewayLineEdit.setFont(font)
-        self.ethStaticGatewayLineEdit.setStyleSheet(styles.textedit)
-        self.ethStaticGatewayLineEdit.setObjectName(_fromUtf8("ethStaticGatewayLineEdit"))
+        self.staticIPGatewayLineEdit = ClickableLineEdit(self.ethStaticSettings)
+        self.staticIPGatewayLineEdit.setGeometry(QtCore.QRect(120, 60, 300, 30))
+        self.staticIPGatewayLineEdit.setFont(font)
+        self.staticIPGatewayLineEdit.setStyleSheet(styles.textedit)
+        self.staticIPGatewayLineEdit.setObjectName(_fromUtf8("staticIPGatewayLineEdit"))
+
+        self.staticIPNameServerLineEdit = ClickableLineEdit(self.ethStaticSettings)
+        self.staticIPNameServerLineEdit.setGeometry(QtCore.QRect(120, 110, 300, 30))
+        self.staticIPNameServerLineEdit.setFont(font)
+        self.staticIPNameServerLineEdit.setStyleSheet(styles.textedit)
+        self.staticIPNameServerLineEdit.setObjectName(_fromUtf8("staticIPNameServerLineEdit"))
 
         self.menuCartButton.setDisabled(True)
 
@@ -407,8 +413,9 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
 
         # Text Input events
         self.wifiPasswordLineEdit.clicked_signal.connect(lambda: self.startKeyboard(self.wifiPasswordLineEdit.setText))
-        self.ethStaticIpLineEdit.clicked_signal.connect(lambda: self.ethShowKeyboard(self.ethStaticIpLineEdit))
-        self.ethStaticGatewayLineEdit.clicked_signal.connect(lambda: self.ethShowKeyboard(self.ethStaticGatewayLineEdit))
+        self.staticIPLineEdit.clicked_signal.connect(lambda: self.staticIPShowKeyboard(self.staticIPLineEdit))
+        self.staticIPGatewayLineEdit.clicked_signal.connect(lambda: self.staticIPShowKeyboard(self.staticIPGatewayLineEdit))
+        self.staticIPNameServerLineEdit.clicked_signal.connect(lambda: self.staticIPShowKeyboard(self.staticIPNameServerLineEdit))
 
         # Button Events:
 
@@ -533,12 +540,16 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         self.toolToggleMotionButton.clicked.connect(self.selectToolMotion)
         self.controlBackButton.pressed.connect(lambda: self.stackedWidget.setCurrentWidget(self.homePage))
         self.setToolTempButton.pressed.connect(self.setToolTemp)
-        self.tool180PreheatButton.pressed.connect(lambda: octopiclient.gcode(command='M104 T1 S180') if self.toolToggleTemperatureButton.isChecked() else octopiclient.gcode(command='M104 T0 S180'))
-        #self.tool220PreheatButton.pressed.connect(lambda: octopiclient.gcode(command='M104 T1 S220') if self.toolToggleTemperatureButton.isChecked() else octopiclient.gcode(command='M104 T0 S220'))
-        self.tool250PreheatButton.pressed.connect(lambda: octopiclient.gcode(command='M104 T1 S250') if self.toolToggleTemperatureButton.isChecked() else octopiclient.gcode(command='M104 T0 S250'))
+        #self.tool180PreheatButton.pressed.connect(lambda: octopiclient.gcode(command='M104 T1 S180') if self.toolToggleTemperatureButton.isChecked() else octopiclient.gcode(command='M104 T0 S180'))
+        #self.tool250PreheatButton.pressed.connect(lambda: octopiclient.gcode(command='M104 T1 S250') if self.toolToggleTemperatureButton.isChecked() else octopiclient.gcode(command='M104 T0 S250'))
+        self.tool180PreheatButton.pressed.connect(lambda: self.preheatToolTemp(180))
+        self.tool250PreheatButton.pressed.connect(lambda: self.preheatToolTemp(250))
         self.setBedTempButton.pressed.connect(lambda: octopiclient.setBedTemperature(self.bedTempSpinBox.value()))
-        self.bed60PreheatButton.pressed.connect(lambda: octopiclient.setBedTemperature(target=60))
-        self.bed100PreheatButton.pressed.connect(lambda: octopiclient.setBedTemperature(target=100))
+        self.bed60PreheatButton.pressed.connect(lambda: self.preheatBedTemp(60))
+        self.bed100PreheatButton.pressed.connect(lambda: self.preheatBedTemp(100))
+        self.chamber40PreheatButton.pressed.connect(lambda: self.preheatChamberTemp(40))
+        self.chamber70PreheatButton.pressed.connect(lambda: self.preheatChamberTemp(70))
+        self.setChamberTempButton.pressed.connect(lambda: octopiclient.gcode(command='M104 C S{}'.format(self.chamberTempSpinBox.value())))
 
 
 
@@ -577,7 +588,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         # Network settings page
         self.networkInfoButton.pressed.connect(self.networkInfo)
         self.configureWifiButton.pressed.connect(self.wifiSettings)
-        self.configureEthButton.pressed.connect(self.ethSettings)
+        self.configureStaticIPButton.pressed.connect(self.staticIPSettings)
         self.networkSettingsBackButton.pressed.connect(lambda: self.stackedWidget.setCurrentWidget(self.settingsPage))
 
         # Network Info Page
@@ -591,14 +602,15 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             lambda: self.stackedWidget.setCurrentWidget(self.networkSettingsPage))
         self.wifiSettingsDoneButton.pressed.connect(self.acceptWifiSettings)
 
-        # Ethernet setings page
-        self.ethStaticCheckBox.stateChanged.connect(self.ethStaticChanged)
-        # self.ethStaticCheckBox.stateChanged.connect(lambda: self.ethStaticSettings.setVisible(self.ethStaticCheckBox.isChecked()))
-        self.ethStaticIpKeyboardButton.pressed.connect(lambda: self.ethShowKeyboard(self.ethStaticIpLineEdit))
-        self.ethStaticGatewayKeyboardButton.pressed.connect(lambda: self.ethShowKeyboard(self.ethStaticGatewayLineEdit))
-        self.ethSettingsDoneButton.pressed.connect(self.ethSaveStaticNetworkInfo)
-        self.ethSettingsCancelButton.pressed.connect(
+        # Static IP setings page
+        self.staticIPKeyboardButton.pressed.connect(lambda: self.staticIPShowKeyboard(self.staticIPLineEdit))
+        self.staticIPGatewayKeyboardButton.pressed.connect(lambda: self.staticIPShowKeyboard(self.staticIPGatewayLineEdit))
+        self.staticIPNameServerKeyboardButton.pressed.connect(
+            lambda: self.staticIPShowKeyboard(self.staticIPNameServerLineEdit))
+        self.staticIPSettingsDoneButton.pressed.connect(self.staticIPSaveStaticNetworkInfo)
+        self.staticIPSettingsCancelButton.pressed.connect(
             lambda: self.stackedWidget.setCurrentWidget(self.networkSettingsPage))
+        self.deleteStaticIPSettingsButton.pressed.connect(self.deleteStaticIPSettings)
 
         # Display settings
         self.rotateDisplay.pressed.connect(self.showRotateDisplaySettingsPage)
@@ -783,7 +795,58 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
                 if dialog.WarningOk(self, "Door opened"):
                     return
 
-    ''' +++++++++++++++++++++++++++ IDEX VAS +++++++++++++++++++++++++++++++++++++ '''
+    ''' +++++++++++++++++++++++++++ Volterra VAS +++++++++++++++++++++++++++++++++++++ '''
+
+    def doorLock(self):
+        '''
+        function that toggles locking and unlocking the front door
+        :return:
+        '''
+        octopiclient.overrideDoorLock()
+
+    def doorLockMsg(self, data):
+        if "msg" not in data:
+            return
+
+        msg = data["msg"]
+
+        if self.dialog_doorlock:
+            self.dialog_doorlock.close()
+            self.dialog_doorlock = None
+
+        if msg is not None:
+            self.dialog_doorlock = dialog.dialog(self, msg, icon="exclamation-mark.png")
+            if self.dialog_doorlock.exec_() == QtGui.QMessageBox.Ok:
+                self.dialog_doorlock = None
+                return
+
+    def doorLockHandler(self, data):
+        door_lock_disabled = False
+        door_lock = False
+        # door_sensor = False
+        # door_lock_override = False
+
+        if 'door_lock' in data:
+            door_lock_disabled = data["door_lock"] == "disabled"
+            door_lock = data["door_lock"] == 1
+        # if 'door_sensor' in data:
+        #     door_sensor = data["door_sensor"] == 1
+        # if 'door_lock_override' in data:
+        #     door_lock_override = data["door_lock_override"] == 1
+
+        # if self.dialog_doorlock:
+        #     self.dialog_doorlock.close()
+        #     self.dialog_doorlock = None
+
+        self.doorLockButton.setVisible(not door_lock_disabled)
+        if not door_lock_disabled:
+            # self.doorLockButton.setChecked(not door_lock)
+            self.doorLockButton.setText('Lock Door' if not door_lock else 'Unlock Door')
+
+            icon = 'doorLock' if not door_lock else 'doorUnlock'
+            self.doorLockButton.setIcon(QtGui.QIcon(_fromUtf8("templates/img/" + icon + ".png")))
+        else:
+            return
 
     ''' +++++++++++++++++++++++++++ Firmware Update+++++++++++++++++++++++++++++++++++ '''
 
@@ -1058,50 +1121,13 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             time.sleep(60)
 
 
-    ''' +++++++++++++++++++++++++++++++++Ethernet Settings+++++++++++++++++++++++++++++ '''
+    ''' +++++++++++++++++++++++++++++++++Static IP Settings+++++++++++++++++++++++++++++ '''
 
-    def ethSettings(self):
-        self.stackedWidget.setCurrentWidget(self.ethSettingsPage)
-        # self.ethStaticCheckBox.setChecked(True)
-        self.ethNetworkInfo()
-
-    def ethStaticChanged(self, state):
-        self.ethStaticSettings.setVisible(self.ethStaticCheckBox.isChecked())
-        self.ethStaticSettings.setEnabled(self.ethStaticCheckBox.isChecked())
-        # if state == QtCore.Qt.Checked:
-        #     self.ethStaticSettings.setVisible(True)
-        # else:
-        #     self.ethStaticSettings.setVisible(False)
-
-    def ethNetworkInfo(self):
-        txt = subprocess.Popen("cat /etc/dhcpcd.conf", stdout=subprocess.PIPE, shell=True).communicate()[0]
-
-        reEthGlobal = b"interface\s+eth0\s?(static\s+[a-z0-9./_=\s]+\n)*"
-        reEthAddress = b"static\s+ip_address=([\d.]+)(/[\d]{1,2})?"
-        reEthGateway = b"static\s+routers=([\d.]+)(/[\d]{1,2})?"
-
-        mtEthGlobal = re.search(reEthGlobal, txt)
-
-        cbStaticEnabled = False
-        txtEthAddress = ""
-        txtEthGateway = ""
-
-        if mtEthGlobal:
-            sz = len(mtEthGlobal.groups())
-            cbStaticEnabled = (sz == 1)
-
-            if sz == 1:
-                mtEthAddress = re.search(reEthAddress, mtEthGlobal.group(0))
-                if mtEthAddress and len(mtEthAddress.groups()) == 2:
-                    txtEthAddress = mtEthAddress.group(1)
-                mtEthGateway = re.search(reEthGateway, mtEthGlobal.group(0))
-                if mtEthGateway and len(mtEthGateway.groups()) == 2:
-                    txtEthGateway = mtEthGateway.group(1)
-
-        self.ethStaticCheckBox.setChecked(cbStaticEnabled)
-        self.ethStaticSettings.setVisible(cbStaticEnabled)
-        self.ethStaticIpLineEdit.setText(txtEthAddress)
-        self.ethStaticGatewayLineEdit.setText(txtEthGateway)
+    def staticIPSettings(self):
+        self.stackedWidget.setCurrentWidget(self.staticIPSettingsPage)
+        #add "eth0" and "wlan0" to staticIPComboBox:
+        self.staticIPComboBox.clear()
+        self.staticIPComboBox.addItems(["eth0", "wlan0"])
 
     def isIpErr(self, ip):
         return (re.search(r"^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$", ip) is None)
@@ -1109,62 +1135,80 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
     def showIpErr(self, var):
         return dialog.WarningOk(self, "Invalid input: {0}".format(var))
 
-    def ethSaveStaticNetworkInfo(self):
-        cbStaticEnabled = self.ethStaticCheckBox.isChecked()
-        txtEthAddress = str(self.ethStaticIpLineEdit.text())
-        txtEthGateway = str(self.ethStaticGatewayLineEdit.text())
+    def staticIPSaveStaticNetworkInfo(self):
+        txtStaticIPInterface = self.staticIPComboBox.currentText()
+        txtStaticIPAddress = str(self.staticIPLineEdit.text())
+        txtStaticIPGateway = str(self.staticIPGatewayLineEdit.text())
+        txtStaticIPNameServer = str(self.staticIPNameServerLineEdit.text())
 
-        if cbStaticEnabled:
-            if self.isIpErr(txtEthAddress):
-                return self.showIpErr("IP Address")
-            if self.isIpErr(txtEthGateway):
-                return self.showIpErr("Gateway")
+        if self.isIpErr(txtStaticIPAddress):
+            return self.showIpErr("IP Address")
+        if self.isIpErr(txtStaticIPGateway):
+            return self.showIpErr("Gateway")
+        if txtStaticIPNameServer is not "":
+            if self.isIpErr(txtStaticIPNameServer):
+                return self.showIpErr("NameServer")
+        Globaltxt = subprocess.Popen("cat /etc/dhcpcd.conf", stdout=subprocess.PIPE, shell=True).communicate()[
+            0].decode('utf8')
+        staticIPConfig = ""
+        # using regex remove all lines staring with "interface" and "static" from txt
+        Globaltxt = re.sub(r"interface.*\n", "", Globaltxt)
+        Globaltxt = re.sub(r"static.*\n", "", Globaltxt)
+        Globaltxt = re.sub(r"^\s+", "", Globaltxt)
 
-        txt = subprocess.Popen("cat /etc/dhcpcd.conf", stdout=subprocess.PIPE, shell=True).communicate()[0]
-        op = ""
+        staticIPConfig = "\ninterface {0}\nstatic ip_address={1}/24\nstatic routers={2}\nstatic domain_name_servers=8.8.8.8 8.8.4.4 {3}\n\n".format(
+            txtStaticIPInterface, txtStaticIPAddress, txtStaticIPGateway, txtStaticIPNameServer)
+        Globaltxt = staticIPConfig + Globaltxt
+        with open("/etc/dhcpcd.conf", "w") as f:
+            f.write(Globaltxt)
 
-        reEthGlobal = r"interface\s+eth0"
-        mtEthGlobal = re.search(reEthGlobal, txt)
+        if txtStaticIPInterface == 'eth0':
+            print("Restarting networking for eth0")
+            self.restartStaticIPThreadObject = ThreadRestartNetworking(ThreadRestartNetworking.ETH)
+            self.restartStaticIPThreadObject.signal.connect(self.staticIPReconnectResult)
+            self.restartStaticIPThreadObject.start()
+            # self.connect(self.restartStaticIPThreadObject, QtCore.SIGNAL(signal), self.staticIPReconnectResult)
+            self.staticIPMessageBox = dialog.dialog(self,
+                                                    "Restarting networking, please wait...",
+                                                    icon="exclamation-mark.png",
+                                                    buttons=QtWidgets.QMessageBox.Cancel)
+            if self.staticIPMessageBox.exec_() in {QtWidgets.QMessageBox.Ok, QtWidgets.QMessageBox.Cancel}:
+                self.stackedWidget.setCurrentWidget(self.networkSettingsPage)
+        elif txtStaticIPInterface == 'wlan0':
+            print("Restarting networking for wlan0")
+            self.restartWifiThreadObject = ThreadRestartNetworking(ThreadRestartNetworking.WLAN)
+            self.restartWifiThreadObject.signal.connect(self.wifiReconnectResult)
+            self.restartWifiThreadObject.start()
+            self.wifiMessageBox = dialog.dialog(self,
+                                                "Restarting networking, please wait...",
+                                                icon="exclamation-mark.png",
+                                                buttons=QtWidgets.QMessageBox.Cancel)
+            if self.wifiMessageBox.exec_() in {QtWidgets.QMessageBox.Ok, QtWidgets.QMessageBox.Cancel}:
+                self.stackedWidget.setCurrentWidget(self.networkSettingsPage)
 
-        if cbStaticEnabled:
-            if not mtEthGlobal:
-                txt = txt + "\n" + "interface eth0" + "\n"
-            op = "interface eth0\nstatic ip_address={0}/24\nstatic routers={1}\nstatic domain_name_servers=8.8.8.8 8.8.4.4\n\n".format(
-                txtEthAddress, txtEthGateway)
+    def deleteStaticIPSettings(self):
+        Globaltxt = subprocess.Popen("cat /etc/dhcpcd.conf", stdout=subprocess.PIPE, shell=True).communicate()[
+            0].decode('utf8')
+        # using regex remove all lines staring with "interface" and "static" from txt
+        Globaltxt = re.sub(r"interface.*\n", "", Globaltxt)
+        Globaltxt = re.sub(r"static.*\n", "", Globaltxt)
+        Globaltxt = re.sub(r"^\s+", "", Globaltxt)
+        with open("/etc/dhcpcd.conf", "w") as f:
+            f.write(Globaltxt)
+        self.stackedWidget.setCurrentWidget(self.networkSettingsPage)
 
-        res = re.sub(r"interface\s+eth0\s?(static\s+[a-z0-9./_=\s]+\n)*", op, txt)
-        try:
-            file = open("/etc/dhcpcd.conf", "w")
-            file.write(res)
-            file.close()
-        except:
-            if dialog.WarningOk(self, "Failed to change Ethernet Interface configuration."):
-                pass
-
-        # signal = 'ETH_RECONNECT_RESULT'
-        # self.restartEthThreadObject = ThreadRestartNetworking(ThreadRestartNetworking.ETH, signal)
-        self.restartEthThreadObject = ThreadRestartNetworking(ThreadRestartNetworking.ETH)
-        self.restartEthThreadObject.signal.connect(self.ethReconnectResult)
-        self.restartEthThreadObject.start()
-        # self.connect(self.restartEthThreadObject, QtCore.SIGNAL(signal), self.ethReconnectResult)
-        self.ethMessageBox = dialog.dialog(self,
-                                           "Restarting networking, please wait...",
-                                           icon="exclamation-mark.png",
-                                           buttons=QtWidgets.QMessageBox.Cancel)
-        if self.ethMessageBox.exec_() in {QtWidgets.QMessageBox.Ok, QtWidgets.QMessageBox.Cancel}:
-            self.stackedWidget.setCurrentWidget(self.networkSettingsPage)
-
-    def ethReconnectResult(self, x):
-        self.ethMessageBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
+    def staticIPReconnectResult(self, x):
+        self.staticIPMessageBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
         if x is not None:
-            self.ethMessageBox.setLocalIcon('success.png')
-            self.ethMessageBox.setText('Connected, IP: ' + x)
+            self.staticIPMessageBox.setLocalIcon('success.png')
+            self.staticIPMessageBox.setText('Connected, IP: ' + x)
         else:
 
-            self.ethMessageBox.setText("Not able to connect to Ethernet")
+            self.staticIPMessageBox.setText("Not able to set Static IP")
 
-    def ethShowKeyboard(self, textbox):
+    def staticIPShowKeyboard(self, textbox):
         self.startKeyboard(textbox.setText, onlyNumeric=True, noSpace=True, text=str(textbox.text()))
+
     ''' ++++++++++++++++++++++++++++++++Display Settings+++++++++++++++++++++++++++++++ '''
 
     def touchCalibration(self):
@@ -1760,6 +1804,22 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         else:
             octopiclient.gcode(command='M104 T0 S' + str(self.toolTempSpinBox.value()))
             # octopiclient.setToolTemperature({"tool0": self.toolTempSpinBox.value()})
+
+    def preheatToolTemp(self, temp):
+        if self.toolToggleTemperatureButton.isChecked():
+            octopiclient.gcode(command='M104 T1 S' + str(temp))
+        else:
+            octopiclient.gcode(command='M104 T0 S' + str(temp))
+        self.toolTempSpinBox.setProperty("value", temp)
+
+    def preheatBedTemp(self, temp):
+        octopiclient.gcode(command='M140 S' + str(temp))
+        self.bedTempSpinBox.setProperty("value", temp)
+
+    def preheatChamberTemp(self, temp):
+        octopiclient.gcode(command='M104 C S' + str(temp))
+        self.chamberTempSpinBox.setProperty("value", temp)
+
 
     def coolDownAction(self):
         ''''
