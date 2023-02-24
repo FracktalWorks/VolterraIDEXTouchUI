@@ -3154,7 +3154,7 @@ QCheckBox::indicator:unchecked {
       <property name="contextMenuPolicy">
        <enum>Qt::NoContextMenu</enum>
       </property>
-      <widget class="QLabel" name="staticIPLabel_2">
+      <widget class="QLabel" name="staticIPLabel">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -3181,7 +3181,7 @@ QCheckBox::indicator:unchecked {
         <string>IP Address</string>
        </property>
       </widget>
-      <widget class="QLabel" name="staticIPGatewayLabel_2">
+      <widget class="QLabel" name="staticIPGatewayLabel">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -3208,7 +3208,7 @@ QCheckBox::indicator:unchecked {
         <string>Gateway</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="staticIPGatewayKeyboardButton_2">
+      <widget class="QPushButton" name="staticIPGatewayKeyboardButton">
        <property name="geometry">
         <rect>
          <x>420</x>
@@ -3263,7 +3263,7 @@ QPushButton:focus {
         </size>
        </property>
       </widget>
-      <widget class="QPushButton" name="staticIPKeyboardButton_2">
+      <widget class="QPushButton" name="staticIPKeyboardButton">
        <property name="enabled">
         <bool>true</bool>
        </property>
@@ -3324,7 +3324,7 @@ QPushButton:focus {
         </size>
        </property>
       </widget>
-      <widget class="QPushButton" name="staticIPNameServerKeyboardButton_2">
+      <widget class="QPushButton" name="staticIPNameServerKeyboardButton">
        <property name="geometry">
         <rect>
          <x>420</x>
@@ -3379,7 +3379,7 @@ QPushButton:focus {
         </size>
        </property>
       </widget>
-      <widget class="QLabel" name="staticIPNameServerLabel_2">
+      <widget class="QLabel" name="staticIPNameServerLabel">
        <property name="geometry">
         <rect>
          <x>10</x>

@@ -551,9 +551,6 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         self.chamber70PreheatButton.pressed.connect(lambda: self.preheatChamberTemp(70))
         self.setChamberTempButton.pressed.connect(lambda: octopiclient.gcode(command='M104 C S{}'.format(self.chamberTempSpinBox.value())))
 
-
-
-
         self.setFlowRateButton.pressed.connect(lambda: octopiclient.flowrate(self.flowRateSpinBox.value()))
         self.setFeedRateButton.pressed.connect(lambda: octopiclient.feedrate(self.feedRateSpinBox.value()))
 
