@@ -24,7 +24,7 @@ plugins:
     contact_door_sensor: '0'
     contact_extruder0: '0'
     contact_extruder1: '0'
-    enabled_door_sensor: '0'
+    enabled_door_sensor: '1'
     enabled_extruder0: '1'
     enabled_extruder1: '1'
     pause_print: '1'
