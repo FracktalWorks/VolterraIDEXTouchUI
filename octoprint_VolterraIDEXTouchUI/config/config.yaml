@@ -78,39 +78,6 @@ plugins:
     enabled: true
 printerProfiles:
   default: _default
-  defaultProfile:
-    axes:
-      e:
-        inverted: false
-        speed: 300
-      x:
-        inverted: false
-        speed: 6000
-      y:
-        inverted: false
-        speed: 6000
-      z:
-        inverted: false
-        speed: 200
-    color: default
-    extruder:
-      count: 2
-      nozzleDiameter: 0.6
-      offsets:
-      - - 0.0
-        - 0.0
-      sharedNozzle: false
-    heatedBed: true
-    id: _default
-    model: Fracktal Works Volterra IDEX Series
-    name: Volterra IDEX
-    volume:
-      custom_box: false
-      depth: 400.0
-      formFactor: rectangular
-      height: 400.0
-      origin: lowerleft
-      width: 400.0
 serial:
   additionalPorts:
   - /tmp/printer
