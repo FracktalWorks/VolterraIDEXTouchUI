@@ -112,12 +112,14 @@ printerProfiles:
       origin: lowerleft
       width: 400.0
 serial:
-  baudrate: 115200
+  additionalPorts:
+  - /tmp/printer
+  baudrate: 250000
   blacklistedPorts:
   - /dev/ttyS*
   disconnectOnErrors: false
   ignoreErrorsFromFirmware: true
-  port: /dev/ttyUSB0
+  port: /tmp/printer
 server:
   commands:
     serverRestartCommand: sudo shutdown -r now

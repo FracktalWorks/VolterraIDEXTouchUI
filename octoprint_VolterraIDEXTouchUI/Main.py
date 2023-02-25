@@ -2315,22 +2315,28 @@ class ThreadSanityCheck(QtCore.QThread):
                     break
                 octopiclient = octoprintAPI(ip, apiKey)
                 if not self.virtual:
-                    result = subprocess.Popen("dmesg | grep 'ttyUSB'", stdout=subprocess.PIPE, shell=True).communicate()[0]
-                    result = result.split(b'\n')  # each ssid and pass from an item in a list ([ssid pass,ssid paas])
+                    result = subprocess.Popen("dmesg | grep 'ttyACM\|ttyUSB''", stdout=subprocess.PIPE, shell=True).communicate()[0]
+                    result = result.split(b'\n')
                     print(result)
                     result = [s.strip() for s in result]
                     for line in result:
                         if b'FTDI' in line:
-                            self.MKSPort = line[line.index(b'ttyUSB'):line.index(b'tty3') + 7].decode('utf-8')
-                            print(self.MKSPort)
+                            # self.MKSPort = line[line.index(b'ttyUSB'):line.index(b'tty3') + 7].decode('utf-8')
+                            # print(self.MKSPort)
+                            self.klipperMCUConnected = True
                         if b'ch34' in line:
-                            self.MKSPort = line[line.index(b'ttyUSB'):line.index(b'tty3') + 7].decode('utf-8')
-                            print(self.MKSPort)
+                            # self.MKSPort = line[line.index(b'ttyUSB'):line.index(b'tty3') + 7].decode('utf-8')
+                            # print(self.MKSPort)
+                            self.klipperMCUConnected = True
+                        if b'ACM' in line:
+                            self.klipperMCUConnected = True
 
-                    if not self.MKSPort:
+                    if not self.klipperMCUConnected:
                         octopiclient.connectPrinter(port="VIRTUAL", baudrate=115200)
                     else:
-                        octopiclient.connectPrinter(port="/dev/" + self.MKSPort, baudrate=115200)
+                        octopiclient.connectPrinter(port="/tmp/printer", baudrate=250000)
+                    # else:
+                    #     octopiclient.connectPrinter(port="/dev/" + self.MKSPort, baudrate=115200)
                 break
             except Exception as e:
                 time.sleep(1)
