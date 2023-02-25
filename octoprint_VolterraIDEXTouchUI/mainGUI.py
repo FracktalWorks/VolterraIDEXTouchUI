@@ -789,8 +789,8 @@ class Ui_MainWindow(object):
 "    border-color: navy; /* make the default button prominent */\n"
 "}")
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap("../../Volterra400Dual2022TouchUI/octoprint_Volterra400Dual2022TouchUI/templates/img/doorUnlock.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon4.addPixmap(QtGui.QPixmap("../../Volterra400Dual2022TouchUI/octoprint_Volterra400Dual2022TouchUI/templates/img/doorLock.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon4.addPixmap(QtGui.QPixmap("templates/img/doorUnlock.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon4.addPixmap(QtGui.QPixmap("templates/img/doorLock.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.doorLockButton.setIcon(icon4)
         self.doorLockButton.setIconSize(QtCore.QSize(50, 50))
         self.doorLockButton.setCheckable(False)

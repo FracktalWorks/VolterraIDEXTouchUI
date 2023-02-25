@@ -1648,8 +1648,8 @@ QToolButton:default {
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>../../Volterra400Dual2022TouchUI/octoprint_Volterra400Dual2022TouchUI/templates/img/doorUnlock.png</normaloff>
-        <normalon>../../Volterra400Dual2022TouchUI/octoprint_Volterra400Dual2022TouchUI/templates/img/doorLock.png</normalon>../../Volterra400Dual2022TouchUI/octoprint_Volterra400Dual2022TouchUI/templates/img/doorUnlock.png</iconset>
+        <normaloff>templates/img/doorUnlock.png</normaloff>
+        <normalon>templates/img/doorLock.png</normalon>templates/img/doorUnlock.png</iconset>
       </property>
       <property name="iconSize">
        <size>
