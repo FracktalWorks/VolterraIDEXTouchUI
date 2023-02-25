@@ -2315,7 +2315,7 @@ class ThreadSanityCheck(QtCore.QThread):
                     break
                 octopiclient = octoprintAPI(ip, apiKey)
                 if not self.virtual:
-                    result = subprocess.Popen("dmesg | grep 'ttyACM\|ttyUSB''", stdout=subprocess.PIPE, shell=True).communicate()[0]
+                    result = subprocess.Popen("dmesg | grep 'ttyACM\|ttyUSB'", stdout=subprocess.PIPE, shell=True).communicate()[0]
                     result = result.split(b'\n')
                     print(result)
                     result = [s.strip() for s in result]

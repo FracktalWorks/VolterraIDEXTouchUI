@@ -81,6 +81,7 @@ printerProfiles:
 serial:
   additionalPorts:
   - /tmp/printer
+  autoconnect: true
   baudrate: 250000
   blacklistedPorts:
   - /dev/ttyS*
