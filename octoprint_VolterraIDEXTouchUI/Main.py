@@ -2208,7 +2208,7 @@ class QtWebsocket(QtCore.QThread):
                 self.connected_signal.emit()
                 print("connected")
         if "plugin" in data:
-            if data["plugin"]["plugin"] == 'IdexServices':
+            if data["plugin"]["plugin"] == 'VolterraServices':
                  self.filament_sensor_triggered_signal.emit(data["plugin"]["data"])
 
             if data["plugin"]["plugin"] == 'JuliaFirmwareUpdater':
