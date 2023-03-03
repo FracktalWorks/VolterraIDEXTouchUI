@@ -564,12 +564,14 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         self.toolToggleChangeFilamentButton.clicked.connect(self.selectToolChangeFilament)
         self.changeFilamentBackButton.pressed.connect(self.control)
         self.changeFilamentBackButton2.pressed.connect(self.changeFilamentCancel)
-        self.changeFilamentUnloadButton.pressed.connect(lambda: self.unloadFilament())
-        self.changeFilamentLoadButton.pressed.connect(lambda: self.loadFilament())
+        self.changeFilamentBackButton3.pressed.connect(self.changeFilamentCancel)
+        self.changeFilamentUnloadButton.pressed.connect(self.unloadFilament)
+        self.changeFilamentLoadButton.pressed.connect(self.loadFilament)
+        self.loadedTillExtruderButton.pressed.connect(self.changeFilamentExtrudePageFunction)
         self.loadDoneButton.pressed.connect(self.control)
         self.unloadDoneButton.pressed.connect(self.changeFilament)
-        self.retractFilamentButton.pressed.connect(lambda: octopiclient.extrude(-20))
-        self.ExtrudeButton.pressed.connect(lambda: octopiclient.extrude(20))
+        #self.retractFilamentButton.pressed.connect(lambda: octopiclient.extrude(-20))
+        #self.ExtrudeButton.pressed.connect(lambda: octopiclient.extrude(20))
 
         # Settings Page
         self.settingsBackButton.pressed.connect(lambda: self.stackedWidget.setCurrentWidget(self.MenuPage))
@@ -700,8 +702,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
                 dialog.WarningOk(response["status"])
             else:
                 dialog.WarningOk(response["status"])
-        else:
-            octoprintAPI.restore(restore=False)
+
 
     def onServerConnected(self):
         self.isFilamentSensorInstalled()
@@ -771,19 +772,19 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             pause_print = data["pause_print"]
 
         if triggered_extruder0 and self.stackedWidget.currentWidget() not in [self.changeFilamentPage, self.changeFilamentProgressPage,
-                                  self.changeFilamentExtrudePage, self.changeFilamentRetractPage]:
+                                  self.changeFilamentExtrudePage, self.changeFilamentRetractPage,self.changeFilamentLoadPage,self.changeFilamentUnloadPage]:
             if dialog.WarningOk(self, "Filament outage in Extruder 0"):
                 pass
 
         if triggered_extruder1 and self.stackedWidget.currentWidget() not in [self.changeFilamentPage, self.changeFilamentProgressPage,
-                                  self.changeFilamentExtrudePage, self.changeFilamentRetractPage]:
+                                  self.changeFilamentExtrudePage, self.changeFilamentRetractPage,self.changeFilamentLoadPage,self.changeFilamentUnloadPage]:
             if dialog.WarningOk(self, "Filament outage in Extruder 1"):
                 pass
 
         if triggered_door:
             if self.printerStatusText == "Printing":
                 no_pause_pages = [self.controlPage, self.changeFilamentPage, self.changeFilamentProgressPage,
-                                  self.changeFilamentExtrudePage, self.changeFilamentRetractPage]
+                                  self.changeFilamentExtrudePage, self.changeFilamentRetractPage,self.changeFilamentLoadPage,]
                 if not pause_print or self.stackedWidget.currentWidget() in no_pause_pages:
                     if dialog.WarningOk(self, "Door opened"):
                         return
@@ -1319,6 +1320,50 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         self.changeFilamentHeatingFlag = True
         self.loadFlag = True
 
+
+    @run_async
+    def changeFilamentLoadFunction(self):
+        '''
+        This function is called once the heating is done, which slowly moves the extruder so that it starts pulling filament
+        '''
+        self.stackedWidget.setCurrentWidget(self.changeFilamentLoadPage)
+        while self.stackedWidget.currentWidget() == self.changeFilamentLoadPage:
+            octopiclient.gcode("G91")
+            octopiclient.gcode("G1 E15 F1500")
+            octopiclient.gcode("G90")
+            time.sleep(1)
+
+    @run_async
+    def changeFilamentExtrudePageFunction(self):
+        '''
+        once filament is loaded, this function is called to extrude filament till the toolhead
+        '''
+        self.stackedWidget.setCurrentWidget(self.changeFilamentExtrudePage)
+        octopiclient.gcode("G91")
+        octopiclient.gcode("G1 E1000 F4000")
+        octopiclient.gcode("G1 E500 F2000")
+        octopiclient.gcode("G90")
+        while self.stackedWidget.currentWidget() == self.changeFilamentExtrudePage:
+            octopiclient.gcode("G91")
+            octopiclient.gcode("G1 E5 F400")
+            octopiclient.gcode("G90")
+            time.sleep(3)
+    @run_async
+    def changeFilamentRetractFunction(self):
+        '''
+        Remove the filament from the toolhead
+        '''
+        self.stackedWidget.setCurrentWidget(self.changeFilamentRetractPage)
+        octopiclient.gcode("G91")
+        octopiclient.gcode("G1 E-500 F1000")
+        octopiclient.gcode("G1 E-1000 F4000")
+        octopiclient.gcode("G90")
+        while self.stackedWidget.currentWidget() == self.changeFilamentRetractPage:
+            octopiclient.gcode("G91")
+            octopiclient.gcode("G1 E-20 F4000")
+            octopiclient.gcode("G90")
+            time.sleep(3)
+
     def changeFilament(self):
         self.stackedWidget.setCurrentWidget(self.changeFilamentPage)
         self.changeFilamentComboBox.clear()
@@ -1575,10 +1620,10 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
                     self.changeFilamentProgress.setMaximum(temperature['tool0Actual'])
                     self.changeFilamentHeatingFlag = False
                     if self.loadFlag:
-                        self.stackedWidget.setCurrentWidget(self.changeFilamentExtrudePage)
+                        self.changeFilamentLoadFunction()
                     else:
-                        self.stackedWidget.setCurrentWidget(self.changeFilamentRetractPage)
                         octopiclient.extrude(5)     # extrudes some amount of filament to prevent plugging
+                        self.changeFilamentRetractFunction()
 
                 self.changeFilamentProgress.setValue(temperature['tool0Actual'])
             elif self.activeExtruder == 1:
@@ -1590,10 +1635,10 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
                     self.changeFilamentProgress.setMaximum(temperature['tool1Actual'])
                     self.changeFilamentHeatingFlag = False
                     if self.loadFlag:
-                        self.stackedWidget.setCurrentWidget(self.changeFilamentExtrudePage)
+                        self.changeFilamentLoadFunction()
                     else:
-                        self.stackedWidget.setCurrentWidget(self.changeFilamentRetractPage)
                         octopiclient.extrude(5)     # extrudes some amount of filament to prevent plugging
+                        self.changeFilamentRetractFunction()
 
                 self.changeFilamentProgress.setValue(temperature['tool1Actual'])
 

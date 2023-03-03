@@ -488,7 +488,7 @@ class octoprintAPI:
         headers = {'content-type': 'application/json', 'X-Api-Key': self.apiKey}
         requests.post(url, data=json.dumps(payload), headers=headers)
 
-    def extrude(self, amount):
+    def extrude(self, amount,speed=None):
         '''
         Extrudes the given amount of filament from the currently selected tool
 
@@ -498,6 +498,10 @@ class octoprintAPI:
         May be negative to retract.
         '''
         url = 'http://' + self.ip + '/api/printer/tool'
+        if speed != None:
+            payload = {'command': 'extrude', 'amount': amount, 'speed': speed}
+        else:
+            payload = {'command': 'extrude', 'amount': amount}
         payload = {'command': 'extrude', 'amount': amount}
         headers = {'content-type': 'application/json', 'X-Api-Key': self.apiKey}
         requests.post(url, data=json.dumps(payload), headers=headers)

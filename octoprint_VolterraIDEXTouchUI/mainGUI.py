@@ -8248,6 +8248,129 @@ class Ui_MainWindow(object):
         self.label_2.setScaledContents(True)
         self.label_2.setObjectName("label_2")
         self.stackedWidget.addWidget(self.changeFilamentProgressPage)
+        self.changeFilamentLoadPage = QtWidgets.QWidget()
+        self.changeFilamentLoadPage.setObjectName("changeFilamentLoadPage")
+        self.loadedTillExtruderButton = QtWidgets.QPushButton(self.changeFilamentLoadPage)
+        self.loadedTillExtruderButton.setGeometry(QtCore.QRect(0, 620, 480, 91))
+        font = QtGui.QFont()
+        font.setFamily("Gotham")
+        font.setPointSize(16)
+        self.loadedTillExtruderButton.setFont(font)
+        self.loadedTillExtruderButton.setStyleSheet("QPushButton {\n"
+"     border: 1px solid rgb(87, 87, 87);\n"
+"    background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0.188, stop:0 rgba(180, 180, 180, 255), stop:1 rgba(255, 255, 255, 255));\n"
+"\n"
+"\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+"                                      stop: 0 #dadbde, stop: 1 #f6f7fa);\n"
+"}\n"
+"\n"
+"QPushButton:flat {\n"
+"    border: none; /* no border for a flat push button */\n"
+"}\n"
+"\n"
+"QPushButton:default {\n"
+"    border-color: navy; /* make the default button prominent */\n"
+"}\n"
+"\n"
+"QPushButton:focus {\n"
+"    outline: none;\n"
+"}")
+        self.loadedTillExtruderButton.setIconSize(QtCore.QSize(40, 40))
+        self.loadedTillExtruderButton.setObjectName("loadedTillExtruderButton")
+        self.feedFilamentlabel_5 = QtWidgets.QLabel(self.changeFilamentLoadPage)
+        self.feedFilamentlabel_5.setGeometry(QtCore.QRect(0, 130, 461, 31))
+        font = QtGui.QFont()
+        font.setFamily("Gotham Light")
+        font.setPointSize(14)
+        font.setBold(False)
+        font.setWeight(50)
+        self.feedFilamentlabel_5.setFont(font)
+        self.feedFilamentlabel_5.setStyleSheet("color: rgb(255, 255, 255);\n"
+"background-color: rgba(255, 255, 255, 0);")
+        self.feedFilamentlabel_5.setObjectName("feedFilamentlabel_5")
+        self.feedFilamentlabel_6 = QtWidgets.QLabel(self.changeFilamentLoadPage)
+        self.feedFilamentlabel_6.setGeometry(QtCore.QRect(0, 100, 461, 31))
+        font = QtGui.QFont()
+        font.setFamily("Gotham Light")
+        font.setPointSize(14)
+        font.setBold(False)
+        font.setWeight(50)
+        self.feedFilamentlabel_6.setFont(font)
+        self.feedFilamentlabel_6.setStyleSheet("color: rgb(255, 255, 255);\n"
+"background-color: rgba(255, 255, 255, 0);")
+        self.feedFilamentlabel_6.setObjectName("feedFilamentlabel_6")
+        self.feedFilamentlabel_7 = QtWidgets.QLabel(self.changeFilamentLoadPage)
+        self.feedFilamentlabel_7.setGeometry(QtCore.QRect(0, 270, 461, 31))
+        font = QtGui.QFont()
+        font.setFamily("Gotham Light")
+        font.setPointSize(14)
+        font.setBold(False)
+        font.setWeight(50)
+        self.feedFilamentlabel_7.setFont(font)
+        self.feedFilamentlabel_7.setStyleSheet("color: rgb(255, 255, 255);\n"
+"background-color: rgba(255, 255, 255, 0);")
+        self.feedFilamentlabel_7.setObjectName("feedFilamentlabel_7")
+        self.feedFilamentlabel_8 = QtWidgets.QLabel(self.changeFilamentLoadPage)
+        self.feedFilamentlabel_8.setGeometry(QtCore.QRect(0, 300, 461, 31))
+        font = QtGui.QFont()
+        font.setFamily("Gotham Light")
+        font.setPointSize(14)
+        font.setBold(False)
+        font.setWeight(50)
+        self.feedFilamentlabel_8.setFont(font)
+        self.feedFilamentlabel_8.setStyleSheet("color: rgb(255, 255, 255);\n"
+"background-color: rgba(255, 255, 255, 0);")
+        self.feedFilamentlabel_8.setObjectName("feedFilamentlabel_8")
+        self.changeFilamentBackButton3 = QtWidgets.QPushButton(self.changeFilamentLoadPage)
+        self.changeFilamentBackButton3.setGeometry(QtCore.QRect(0, 710, 481, 91))
+        font = QtGui.QFont()
+        font.setFamily("Gotham")
+        font.setPointSize(13)
+        self.changeFilamentBackButton3.setFont(font)
+        self.changeFilamentBackButton3.setStyleSheet("QPushButton {\n"
+"     border: 1px solid rgb(87, 87, 87);\n"
+"    background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0.188, stop:0 rgba(180, 180, 180, 255), stop:1 rgba(255, 255, 255, 255));\n"
+"\n"
+"\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+"                                      stop: 0 #dadbde, stop: 1 #f6f7fa);\n"
+"}\n"
+"\n"
+"QPushButton:flat {\n"
+"    border: none; /* no border for a flat push button */\n"
+"}\n"
+"\n"
+"QPushButton:default {\n"
+"    border-color: navy; /* make the default button prominent */\n"
+"}\n"
+"\n"
+"QPushButton:focus {\n"
+"    outline: none;\n"
+"}")
+        self.changeFilamentBackButton3.setText("")
+        self.changeFilamentBackButton3.setIcon(icon5)
+        self.changeFilamentBackButton3.setIconSize(QtCore.QSize(50, 50))
+        self.changeFilamentBackButton3.setObjectName("changeFilamentBackButton3")
+        self.feedFilamentlabel_10 = QtWidgets.QLabel(self.changeFilamentLoadPage)
+        self.feedFilamentlabel_10.setGeometry(QtCore.QRect(0, 390, 461, 161))
+        font = QtGui.QFont()
+        font.setFamily("Gotham Light")
+        font.setPointSize(14)
+        font.setBold(False)
+        font.setWeight(50)
+        self.feedFilamentlabel_10.setFont(font)
+        self.feedFilamentlabel_10.setStyleSheet("color: rgb(255, 255, 255);\n"
+"background-color: rgba(255, 255, 255, 0);")
+        self.feedFilamentlabel_10.setWordWrap(True)
+        self.feedFilamentlabel_10.setObjectName("feedFilamentlabel_10")
+        self.stackedWidget.addWidget(self.changeFilamentLoadPage)
         self.changeFilamentExtrudePage = QtWidgets.QWidget()
         self.changeFilamentExtrudePage.setObjectName("changeFilamentExtrudePage")
         self.feedFilamentlabel = QtWidgets.QLabel(self.changeFilamentExtrudePage)
@@ -8292,39 +8415,8 @@ class Ui_MainWindow(object):
 "}")
         self.loadDoneButton.setIconSize(QtCore.QSize(40, 40))
         self.loadDoneButton.setObjectName("loadDoneButton")
-        self.ExtrudeButton = QtWidgets.QPushButton(self.changeFilamentExtrudePage)
-        self.ExtrudeButton.setGeometry(QtCore.QRect(0, 621, 480, 91))
-        font = QtGui.QFont()
-        font.setFamily("Gotham")
-        font.setPointSize(16)
-        self.ExtrudeButton.setFont(font)
-        self.ExtrudeButton.setStyleSheet("QPushButton {\n"
-"     border: 1px solid rgb(87, 87, 87);\n"
-"    background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0.188, stop:0 rgba(180, 180, 180, 255), stop:1 rgba(255, 255, 255, 255));\n"
-"\n"
-"\n"
-"}\n"
-"\n"
-"QPushButton:pressed {\n"
-"    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                      stop: 0 #dadbde, stop: 1 #f6f7fa);\n"
-"}\n"
-"\n"
-"QPushButton:flat {\n"
-"    border: none; /* no border for a flat push button */\n"
-"}\n"
-"\n"
-"QPushButton:default {\n"
-"    border-color: navy; /* make the default button prominent */\n"
-"}\n"
-"\n"
-"QPushButton:focus {\n"
-"    outline: none;\n"
-"}")
-        self.ExtrudeButton.setIconSize(QtCore.QSize(40, 40))
-        self.ExtrudeButton.setObjectName("ExtrudeButton")
         self.feedFilamentlabel_2 = QtWidgets.QLabel(self.changeFilamentExtrudePage)
-        self.feedFilamentlabel_2.setGeometry(QtCore.QRect(10, 40, 461, 31))
+        self.feedFilamentlabel_2.setGeometry(QtCore.QRect(10, 300, 461, 31))
         font = QtGui.QFont()
         font.setFamily("Gotham Light")
         font.setPointSize(14)
@@ -8334,6 +8426,29 @@ class Ui_MainWindow(object):
         self.feedFilamentlabel_2.setStyleSheet("color: rgb(255, 255, 255);\n"
 "background-color: rgba(255, 255, 255, 0);")
         self.feedFilamentlabel_2.setObjectName("feedFilamentlabel_2")
+        self.feedFilamentlabel_9 = QtWidgets.QLabel(self.changeFilamentExtrudePage)
+        self.feedFilamentlabel_9.setGeometry(QtCore.QRect(10, 330, 461, 41))
+        font = QtGui.QFont()
+        font.setFamily("Gotham Light")
+        font.setPointSize(14)
+        font.setBold(False)
+        font.setWeight(50)
+        self.feedFilamentlabel_9.setFont(font)
+        self.feedFilamentlabel_9.setStyleSheet("color: rgb(255, 255, 255);\n"
+"background-color: rgba(255, 255, 255, 0);")
+        self.feedFilamentlabel_9.setObjectName("feedFilamentlabel_9")
+        self.feedFilamentlabel_11 = QtWidgets.QLabel(self.changeFilamentExtrudePage)
+        self.feedFilamentlabel_11.setGeometry(QtCore.QRect(0, 480, 461, 161))
+        font = QtGui.QFont()
+        font.setFamily("Gotham Light")
+        font.setPointSize(14)
+        font.setBold(False)
+        font.setWeight(50)
+        self.feedFilamentlabel_11.setFont(font)
+        self.feedFilamentlabel_11.setStyleSheet("color: rgb(255, 255, 255);\n"
+"background-color: rgba(255, 255, 255, 0);")
+        self.feedFilamentlabel_11.setWordWrap(True)
+        self.feedFilamentlabel_11.setObjectName("feedFilamentlabel_11")
         self.stackedWidget.addWidget(self.changeFilamentExtrudePage)
         self.changeFilamentRetractPage = QtWidgets.QWidget()
         self.changeFilamentRetractPage.setObjectName("changeFilamentRetractPage")
@@ -8390,37 +8505,6 @@ class Ui_MainWindow(object):
         self.feedFilamentlabel_4.setStyleSheet("color: rgb(255, 255, 255);\n"
 "background-color: rgba(255, 255, 255, 0);")
         self.feedFilamentlabel_4.setObjectName("feedFilamentlabel_4")
-        self.retractFilamentButton = QtWidgets.QPushButton(self.changeFilamentRetractPage)
-        self.retractFilamentButton.setGeometry(QtCore.QRect(0, 621, 480, 91))
-        font = QtGui.QFont()
-        font.setFamily("Gotham")
-        font.setPointSize(16)
-        self.retractFilamentButton.setFont(font)
-        self.retractFilamentButton.setStyleSheet("QPushButton {\n"
-"     border: 1px solid rgb(87, 87, 87);\n"
-"    background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0.188, stop:0 rgba(180, 180, 180, 255), stop:1 rgba(255, 255, 255, 255));\n"
-"\n"
-"\n"
-"}\n"
-"\n"
-"QPushButton:pressed {\n"
-"    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                      stop: 0 #dadbde, stop: 1 #f6f7fa);\n"
-"}\n"
-"\n"
-"QPushButton:flat {\n"
-"    border: none; /* no border for a flat push button */\n"
-"}\n"
-"\n"
-"QPushButton:default {\n"
-"    border-color: navy; /* make the default button prominent */\n"
-"}\n"
-"\n"
-"QPushButton:focus {\n"
-"    outline: none;\n"
-"}")
-        self.retractFilamentButton.setIconSize(QtCore.QSize(40, 40))
-        self.retractFilamentButton.setObjectName("retractFilamentButton")
         self.stackedWidget.addWidget(self.changeFilamentRetractPage)
         MainWindow.setCentralWidget(self.mainApplication)
 
@@ -8623,11 +8707,17 @@ class Ui_MainWindow(object):
         self.changeFilamentStatus.setText(_translate("MainWindow", "Heating ..."))
         self.changeFilamentProgress.setFormat(_translate("MainWindow", "%p%"))
         self.changeFilamentNameOperation.setText(_translate("MainWindow", "Loading Filament"))
-        self.feedFilamentlabel.setText(_translate("MainWindow", "Feed Filament into Extruder"))
+        self.loadedTillExtruderButton.setText(_translate("MainWindow", "Done"))
+        self.feedFilamentlabel_5.setText(_translate("MainWindow", "untill the filament gets pulls automatically."))
+        self.feedFilamentlabel_6.setText(_translate("MainWindow", "Push Filament into Filament hole,"))
+        self.feedFilamentlabel_7.setText(_translate("MainWindow", "Press \"DONE\" when the filament"))
+        self.feedFilamentlabel_8.setText(_translate("MainWindow", "starts to get pulled"))
+        self.feedFilamentlabel_10.setText(_translate("MainWindow", "Incase filament cannot be pushed beyond a point, and is not being automatically pulled, check back extruder for issues. "))
+        self.feedFilamentlabel.setText(_translate("MainWindow", "Feeding Filament into Extruder..."))
         self.loadDoneButton.setText(_translate("MainWindow", "Done"))
-        self.ExtrudeButton.setText(_translate("MainWindow", "Extrude"))
-        self.feedFilamentlabel_2.setText(_translate("MainWindow", "Click \"Extrude\" untill filament starts extruding"))
-        self.feedFilamentlabel_3.setText(_translate("MainWindow", "Click \"Retract\" untill filament is removed"))
+        self.feedFilamentlabel_2.setText(_translate("MainWindow", "Click \"Done\" when filament starts"))
+        self.feedFilamentlabel_9.setText(_translate("MainWindow", "coming out of the nozzle"))
+        self.feedFilamentlabel_11.setText(_translate("MainWindow", "Incase Filament is not getting extruded even after waiting for 1-2 minues, Check extruders at the back as well as on the carriage for issues."))
+        self.feedFilamentlabel_3.setText(_translate("MainWindow", "Click \"Done\" once filament is removed."))
         self.unloadDoneButton.setText(_translate("MainWindow", "Done"))
-        self.feedFilamentlabel_4.setText(_translate("MainWindow", "Retract Filament From Extruder"))
-        self.retractFilamentButton.setText(_translate("MainWindow", "Retract"))
+        self.feedFilamentlabel_4.setText(_translate("MainWindow", "Retracting Filament From Extruder..."))
