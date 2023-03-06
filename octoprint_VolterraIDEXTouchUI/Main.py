@@ -114,9 +114,9 @@ filaments = OrderedDict(filaments)
 #                        'X4': 185, 'Y4': 42
 #                        }
 
-calibrationPosition = {'X1': 77, 'Y1': 33,
-                       'X2': 38, 'Y2': 33,
-                       'X3': 145, 'Y3': 186,
+calibrationPosition = {'X1': 27, 'Y1': 60,
+                       'X2': 260, 'Y2': 60,
+                       'X3': 176, 'Y3': 390,
                        'X4': 145, 'Y4': 100
                        }
 
@@ -551,7 +551,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         self.bed100PreheatButton.pressed.connect(lambda: self.preheatBedTemp(100))
         self.chamber40PreheatButton.pressed.connect(lambda: self.preheatChamberTemp(40))
         self.chamber70PreheatButton.pressed.connect(lambda: self.preheatChamberTemp(70))
-        self.setChamberTempButton.pressed.connect(lambda: octopiclient.gcode(command='M104 C S{}'.format(self.chamberTempSpinBox.value())))
+        self.setChamberTempButton.pressed.connect(lambda: octopiclient.gcode(command='M141 S{}'.format(self.chamberTempSpinBox.value())))
 
         self.setFlowRateButton.pressed.connect(lambda: octopiclient.flowrate(self.flowRateSpinBox.value()))
         self.setFeedRateButton.pressed.connect(lambda: octopiclient.feedrate(self.feedRateSpinBox.value()))
