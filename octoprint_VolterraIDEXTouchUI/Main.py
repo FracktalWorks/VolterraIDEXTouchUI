@@ -1862,7 +1862,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         self.bedTempSpinBox.setProperty("value", temp)
 
     def preheatChamberTemp(self, temp):
-        octopiclient.gcode(command='M104 C S' + str(temp))
+        octopiclient.gcode(command='M141 S' + str(temp))
         self.chamberTempSpinBox.setProperty("value", temp)
 
 
