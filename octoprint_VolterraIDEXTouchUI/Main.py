@@ -2033,6 +2033,8 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             octopiclient.gcode(command='G92 Z0')#set the current Z position to zero
             octopiclient.jog(z=1, absolute=True, speed=1500)
             octopiclient.gcode(command='T1')
+            octopiclient.jog(x=calibrationPosition['X4'], y=calibrationPosition['Y4'], absolute=True, speed=2000)
+
             self.toolZOffsetCaliberationPageCount = 2
         else:
             self.doneStep()
