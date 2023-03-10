@@ -2278,7 +2278,7 @@ class QtWebsocket(QtCore.QThread):
                     #     self.emit(QtCore.SIGNAL('SET_Z_HOME_OFFSET'), item[item.index('Z') + 2:].split(' ', 1)[0],
                     #               False)
                     if 'Count' in item:  # can get thris throught the positionUpdate event
-                        self.set_z_tool_offset_signal.emit(item[item.index('Z') + 2:].split(' ', 1)[0],
+                        self.set_z_tool_offset_signal.emit(item[item.index('z') + 2:].split(',', 1)[0], # klipper update for M114
                                   False)
                     if 'M218' in item:
                         self.tool_offset_signal.emit(item[item.index('M218'):])
