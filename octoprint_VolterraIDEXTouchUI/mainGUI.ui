@@ -6989,16 +6989,16 @@ QDoubleSpinBox::down-button:pressed {
        <number>2</number>
       </property>
       <property name="minimum">
-       <double>30.000000000000000</double>
+       <double>-50.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>42.000000000000000</double>
+       <double>50.000000000000000</double>
       </property>
       <property name="singleStep">
        <double>0.025000000000000</double>
       </property>
       <property name="value">
-       <double>36.049999999999997</double>
+       <double>5.000000000000000</double>
       </property>
      </widget>
      <widget class="QPushButton" name="toolOffsetXSetButton">
@@ -7200,10 +7200,10 @@ QDoubleSpinBox::down-button:pressed {
        <number>2</number>
       </property>
       <property name="minimum">
-       <double>-6.000000000000000</double>
+       <double>-50.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>6.000000000000000</double>
+       <double>50.000000000000000</double>
       </property>
       <property name="singleStep">
        <double>0.025000000000000</double>
