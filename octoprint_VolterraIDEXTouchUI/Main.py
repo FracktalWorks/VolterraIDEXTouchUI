@@ -1891,11 +1891,14 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         self.currentZPosition = offset #gets the current z position, used to set new tool offsets.
         # clean this shit up.
         #fuck you past vijay for not cleaning this up
-        if self.setNewToolZOffsetFromCurrentZBool:
-            newToolOffsetZ = float(self.toolOffsetZ) - float(self.currentZPosition)
-            octopiclient.gcode(command='M218 T1 Z{}'.format(newToolOffsetZ))  # restore eeprom settings to get Z home offset, mesh bed leveling back
-            self.setNewToolZOffsetFromCurrentZBool =False
-            octopiclient.gcode(command='M500')  # store eeprom settings to get Z home offset, mesh bed leveling back
+        try:
+            if self.setNewToolZOffsetFromCurrentZBool:
+                newToolOffsetZ = float(self.toolOffsetZ) - float(self.currentZPosition)
+                octopiclient.gcode(command='M218 T1 Z{}'.format(newToolOffsetZ))  # restore eeprom settings to get Z home offset, mesh bed leveling back
+                self.setNewToolZOffsetFromCurrentZBool =False
+                octopiclient.gcode(command='M500')  # store eeprom settings to get Z home offset, mesh bed leveling back
+        except Exception as e:
+                    print("error: " + str(e))
 
     def showProbingFailed(self):
         self.tellAndReboot("Bed position is not calibrated. Please run calibration wizard after restart.")
@@ -1975,7 +1978,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         self.toolZOffsetCaliberationPageCount = 0
         octopiclient.gcode(command='M104 S0') # BEFORE S200
         octopiclient.gcode(command='M104 T1 S0') # BEFORE M104 T1 S200
-        octopiclient.gcode(command='M211 S0')  # Disable software endstop
+        #octopiclient.gcode(command='M211 S0')  # Disable software endstop
         octopiclient.gcode(command='T0')  # Set active tool to t0
         #octopiclient.gcode(command='M503')  # makes sure internal value of Z offset and Tool offsets are stored before erasing
         octopiclient.gcode(command='M420 S0')  # Dissable mesh bed leveling for good measure
