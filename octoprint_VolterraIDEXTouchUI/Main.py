@@ -384,6 +384,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         else:
             self.stackedWidget.setCurrentWidget(self.homePage)
         self.isFilamentSensorInstalled()
+        self.onServerConnected()
 
     def setActions(self):
 
