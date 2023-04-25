@@ -2024,24 +2024,24 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
     #     octopiclient.jog(z=15, absolute=True, speed=1500)
     #     octopiclient.gcode(command='M272 S')
 
-    def nozzleHeightStep1(self):
-        if self.toolZOffsetCaliberationPageCount == 0 :
-            self.toolZOffsetLabel.setText("Move the bed up or down to the First Nozzle , testing height using paper")
-            self.stackedWidget.setCurrentWidget(self.nozzleHeightStep1Page)
-            octopiclient.jog(z=10, absolute=True, speed=1500)
-            octopiclient.jog(x=calibrationPosition['X4'], y=calibrationPosition['Y4'], absolute=True, speed=2000)
-            octopiclient.jog(z=1, absolute=True, speed=1500)
-            self.toolZOffsetCaliberationPageCount = 1
-        elif self.toolZOffsetCaliberationPageCount == 1:
-            self.toolZOffsetLabel.setText("Move the bed up or down to the Second Nozzle , testing height using paper")
-            octopiclient.gcode(command='G92 Z0')#set the current Z position to zero
-            octopiclient.jog(z=1, absolute=True, speed=1500)
-            octopiclient.gcode(command='T1')
-            octopiclient.jog(x=calibrationPosition['X4'], y=calibrationPosition['Y4'], absolute=True, speed=2000)
+    #def nozzleHeightStep1(self):
+    #    if self.toolZOffsetCaliberationPageCount == 0 :
+    #        self.toolZOffsetLabel.setText("Move the bed up or down to the First Nozzle , testing height using paper")
+    #        self.stackedWidget.setCurrentWidget(self.nozzleHeightStep1Page)
+    #        octopiclient.jog(z=10, absolute=True, speed=1500)
+    #        octopiclient.jog(x=calibrationPosition['X4'], y=calibrationPosition['Y4'], absolute=True, speed=2000)
+    #        octopiclient.jog(z=1, absolute=True, speed=1500)
+    #        self.toolZOffsetCaliberationPageCount = 1
+    #    elif self.toolZOffsetCaliberationPageCount == 1:
+    #        self.toolZOffsetLabel.setText("Move the bed up or down to the Second Nozzle , testing height using paper")
+    #        octopiclient.gcode(command='G92 Z0')#set the current Z position to zero
+    #        octopiclient.jog(z=1, absolute=True, speed=1500)
+    #        octopiclient.gcode(command='T1')
+    #        octopiclient.jog(x=calibrationPosition['X4'], y=calibrationPosition['Y4'], absolute=True, speed=2000)
 
-            self.toolZOffsetCaliberationPageCount = 2
-        else:
-            self.doneStep()
+    #        self.toolZOffsetCaliberationPageCount = 2
+    #    else:
+    #        self.doneStep()
 
     def doneStep(self):
         '''
