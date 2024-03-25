@@ -52,7 +52,7 @@ class VolterraIDEXTouchUI(octoprint.plugin.StartupPlugin):
                 # version check: github repository
                 type="github_release",
                 user="FracktalWorks",
-                repo="Octoprint-VolterraIDEXTouchUI",
+                repo="VolterraIDEXTouchUI",
                 current=self._plugin_version,
 
                 # update method: pip

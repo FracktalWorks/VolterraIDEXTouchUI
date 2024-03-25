@@ -5,8 +5,8 @@
  *
  * Fracktal Works
  * __________________
- * Authors: sivasanthosh
- * Created: Nov 2016
+ * Authors: Vijay Varada/Nishant Bilurkar
+ * Created: Dec 2022
  *
  * Licence: AGPLv3
 *************************************************************************
@@ -288,7 +288,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         self.staticIPLineEdit.setGeometry(QtCore.QRect(120, 10, 300, 30))
         self.staticIPLineEdit.setFont(font)
         self.staticIPLineEdit.setStyleSheet(styles.textedit)
-        self.staticIPLineEdit.setObjectName(_fromUtf8("staticIPIpLineEdit"))
+        self.staticIPLineEdit.setObjectName(_fromUtf8("staticIPLineEdit"))
 
         self.staticIPGatewayLineEdit = ClickableLineEdit(self.ethStaticSettings)
         self.staticIPGatewayLineEdit.setGeometry(QtCore.QRect(120, 60, 300, 30))
@@ -303,8 +303,9 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         self.staticIPNameServerLineEdit.setObjectName(_fromUtf8("staticIPNameServerLineEdit"))
 
         self.menuCartButton.setDisabled(True)
+        self.testPrintsButton.setDisabled(True)
 
-        self.movie = QtGui.QMovie("templates/img/loading.gif")
+        self.movie = QtGui.QMovie("templates/img/loading-90.gif")
         self.loadingGif.setMovie(self.movie)
         self.movie.start()
 
@@ -368,6 +369,124 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         except Exception as e:
             self._logger.error(e)
 
+    def safeProceed(self):
+        '''
+        When Octoprint server cannot connect for whatever reason, still show the home screen to conduct diagnostics
+        '''
+        self.movie.stop()
+        if not Development:
+            self.stackedWidget.setCurrentWidget(self.homePage)
+            # self.Lock_showLock()
+            self.setIPStatus()
+        else:
+            self.stackedWidget.setCurrentWidget(self.homePage)
+
+        # Text Input events
+        self.wifiPasswordLineEdit.clicked_signal.connect(lambda: self.startKeyboard(self.wifiPasswordLineEdit.setText))
+        self.staticIPLineEdit.clicked_signal.connect(lambda: self.staticIPShowKeyboard(self.staticIPLineEdit))
+        self.staticIPGatewayLineEdit.clicked_signal.connect(lambda: self.staticIPShowKeyboard(self.staticIPGatewayLineEdit))
+        self.staticIPNameServerLineEdit.clicked_signal.connect(lambda: self.staticIPShowKeyboard(self.staticIPNameServerLineEdit))
+
+        # Button Events:
+
+        # Home Screen:
+        self.stopButton.setDisabled(True)
+        # self.menuButton.pressed.connect(self.keyboardButton)
+        self.menuButton.pressed.connect(lambda: self.stackedWidget.setCurrentWidget(self.MenuPage))
+        self.controlButton.setDisabled(True)
+        self.playPauseButton.setDisabled(True)
+
+        # MenuScreen
+        self.menuBackButton.pressed.connect(lambda: self.stackedWidget.setCurrentWidget(self.homePage))
+        self.menuControlButton.setDisabled(True)
+        self.menuPrintButton.setDisabled(True)
+        self.menuCalibrateButton.setDisabled(True)
+        self.menuSettingsButton.pressed.connect(lambda: self.stackedWidget.setCurrentWidget(self.settingsPage))
+
+
+        # Settings Page
+        self.networkSettingsButton.pressed.connect(
+            lambda: self.stackedWidget.setCurrentWidget(self.networkSettingsPage))
+        self.displaySettingsButton.pressed.connect(
+            lambda: self.stackedWidget.setCurrentWidget(self.displaySettingsPage))
+        self.settingsBackButton.pressed.connect(lambda: self.stackedWidget.setCurrentWidget(self.MenuPage))
+        self.pairPhoneButton.pressed.connect(self.pairPhoneApp)
+        self.OTAButton.setDisabled(True)
+        self.versionButton.setDisabled(True)
+
+        self.restartButton.pressed.connect(self.askAndReboot)
+        self.restoreFactoryDefaultsButton.pressed.connect(self.restoreFactoryDefaults)
+        self.restorePrintSettingsButton.pressed.connect(self.restorePrintDefaults)
+
+        # Network settings page
+        self.networkInfoButton.pressed.connect(self.networkInfo)
+        self.configureWifiButton.pressed.connect(self.wifiSettings)
+        self.configureStaticIPButton.pressed.connect(self.staticIPSettings)
+        self.networkSettingsBackButton.pressed.connect(lambda: self.stackedWidget.setCurrentWidget(self.settingsPage))
+
+        # Network Info Page
+        self.networkInfoBackButton.pressed.connect(
+            lambda: self.stackedWidget.setCurrentWidget(self.networkSettingsPage))
+
+        # WifiSetings page
+        self.wifiSettingsSSIDKeyboardButton.pressed.connect(
+            lambda: self.startKeyboard(self.wifiSettingsComboBox.addItem))
+        self.wifiSettingsCancelButton.pressed.connect(
+            lambda: self.stackedWidget.setCurrentWidget(self.networkSettingsPage))
+        self.wifiSettingsDoneButton.pressed.connect(self.acceptWifiSettings)
+
+        # Static IP settings page
+        self.staticIPKeyboardButton.pressed.connect(lambda: self.staticIPShowKeyboard(self.staticIPLineEdit))
+        self.staticIPGatewayKeyboardButton.pressed.connect(
+            lambda: self.staticIPShowKeyboard(self.staticIPGatewayLineEdit))
+        self.staticIPNameServerKeyboardButton.pressed.connect(
+            lambda: self.staticIPShowKeyboard(self.staticIPNameServerLineEdit))
+        self.staticIPSettingsDoneButton.pressed.connect(self.staticIPSaveStaticNetworkInfo)
+        self.staticIPSettingsCancelButton.pressed.connect(
+            lambda: self.stackedWidget.setCurrentWidget(self.networkSettingsPage))
+        self.deleteStaticIPSettingsButton.pressed.connect(self.deleteStaticIPSettings)
+
+        # # Display settings
+        # self.rotateDisplay.pressed.connect(self.showRotateDisplaySettingsPage)
+        # self.calibrateTouch.pressed.connect(self.touchCalibration)
+        self.displaySettingsBackButton.pressed.connect(lambda: self.stackedWidget.setCurrentWidget(self.settingsPage))
+        #
+        # # Rotate Display Settings
+        # self.rotateDisplaySettingsDoneButton.pressed.connect(self.saveRotateDisplaySettings)
+        # self.rotateDisplaySettingsCancelButton.pressed.connect(
+        #     lambda: self.stackedWidget.setCurrentWidget(self.displaySettingsPage))
+
+        # QR Code
+        self.QRCodeBackButton.pressed.connect(lambda: self.stackedWidget.setCurrentWidget(self.settingsPage))
+
+        # SoftwareUpdatePage
+        self.softwareUpdateBackButton.setDisabled(True)
+        self.performUpdateButton.setDisabled(True)
+
+        # Firmware update page
+        self.firmwareUpdateBackButton.setDisabled(True)
+
+        # Filament sensor toggle
+        self.toggleFilamentSensorButton.setDisabled(True)
+
+
+    def handleStartupError(self):
+        '''
+        Error Handler when Octoprint gives up
+        '''
+
+        print('Unable to connect to Octoprint Server')
+        if dialog.WarningYesNo(self,  "Server Error, Restore failsafe settings?", overlay=True):
+            os.system('sudo rm -rf /home/pi/.octoprint/users.yaml')
+            os.system('sudo rm -rf /home/pi/.octoprint/config.yaml')
+            os.system('sudo cp -f config/users.yaml /home/pi/.octoprint/users.yaml')
+            os.system('sudo cp -f config/config.yaml /home/pi/.octoprint/config.yaml')
+            subprocess.call(["sudo", "systemctl", "restart", "octoprint"])
+            self.sanityCheck.start()
+        else:
+            self.safeProceed()
+
+    
     def proceed(self):
         '''
         Startes websocket, as well as initialises button actions and callbacks. THis is done in such a manner so that the callbacks that depend on websockets
@@ -543,8 +662,8 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         self.toolToggleMotionButton.clicked.connect(self.selectToolMotion)
         self.controlBackButton.pressed.connect(lambda: self.stackedWidget.setCurrentWidget(self.homePage))
         self.setToolTempButton.pressed.connect(self.setToolTemp)
-        #self.tool180PreheatButton.pressed.connect(lambda: octopiclient.gcode(command='M104 T1 S180') if self.toolToggleTemperatureButton.isChecked() else octopiclient.gcode(command='M104 T0 S180'))
-        #self.tool250PreheatButton.pressed.connect(lambda: octopiclient.gcode(command='M104 T1 S250') if self.toolToggleTemperatureButton.isChecked() else octopiclient.gcode(command='M104 T0 S250'))
+        self.tool180PreheatButton.pressed.connect(lambda: octopiclient.gcode(command='M104 T1 S180') if self.toolToggleTemperatureButton.isChecked() else octopiclient.gcode(command='M104 T0 S180'))
+        self.tool250PreheatButton.pressed.connect(lambda: octopiclient.gcode(command='M104 T1 S250') if self.toolToggleTemperatureButton.isChecked() else octopiclient.gcode(command='M104 T0 S250'))
         self.tool180PreheatButton.pressed.connect(lambda: self.preheatToolTemp(180))
         self.tool250PreheatButton.pressed.connect(lambda: self.preheatToolTemp(250))
         self.setBedTempButton.pressed.connect(lambda: octopiclient.setBedTemperature(self.bedTempSpinBox.value()))
@@ -557,8 +676,8 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         self.setFlowRateButton.pressed.connect(lambda: octopiclient.flowrate(self.flowRateSpinBox.value()))
         self.setFeedRateButton.pressed.connect(lambda: octopiclient.feedrate(self.feedRateSpinBox.value()))
 
-        self.moveZPBabyStep.pressed.connect(lambda: octopiclient.gcode(command='SET_GCODE_OFFSET Z_ADJUST=0.025 MOVE=1')) #
-        self.moveZMBabyStep.pressed.connect(lambda: octopiclient.gcode(command='SET_GCODE_OFFSET Z_ADJUST=-0.025 MOVE=1')) #
+        self.moveZPBabyStep.pressed.connect(lambda: octopiclient.gcode(command='M290 Z0.025')) #
+        self.moveZMBabyStep.pressed.connect(lambda: octopiclient.gcode(command='M290 Z-0.025')) #
 
         # ChangeFilament rutien
         self.changeFilamentButton.pressed.connect(self.changeFilament)
@@ -1295,8 +1414,25 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
 
     ''' +++++++++++++++++++++++++++++++++Change Filament+++++++++++++++++++++++++++++++ '''
 
+    def calcExtrudeTime(self, length, speed):
+        '''
+        Calculate the time it takes to extrude a certain length of filament at a certain speed
+        :param length: length of filament to extrude
+        :param speed: speed at which to extrude
+        :return: time in seconds
+        '''
+        return length / (speed/60)
+
     def unloadFilament(self):
         #Update
+        if self.printerStatusText not in ["Printing","Paused"]:
+            if self.activeExtruder == 1:
+                octopiclient.gcode("G90")
+                octopiclient.gcode("G1 X200 Y1 F10000")
+            else:
+                octopiclient.gcode("G90")
+                octopiclient.gcode("G1 X200 Y1 F10000")
+                
         if self.changeFilamentComboBox.findText("Loaded Filament") == -1:
             octopiclient.setToolTemperature({"tool1": filaments[str(
                 self.changeFilamentComboBox.currentText())]}) if self.activeExtruder == 1 else octopiclient.setToolTemperature(
@@ -1310,6 +1446,14 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
 
     def loadFilament(self):
         #Update
+        if self.printerStatusText not in ["Printing","Paused"]:
+            if self.activeExtruder == 1:
+                octopiclient.gcode("G90")
+                octopiclient.gcode("G1 X200 Y1 F10000")
+            else:
+                octopiclient.gcode("G90")
+                octopiclient.gcode("G1 X200 Y1 F10000")
+                
         if self.changeFilamentComboBox.findText("Loaded Filament") == -1:
             octopiclient.setToolTemperature({"tool1": filaments[str(
                 self.changeFilamentComboBox.currentText())]}) if self.activeExtruder == 1 else octopiclient.setToolTemperature(
@@ -1340,15 +1484,17 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         once filament is loaded, this function is called to extrude filament till the toolhead
         '''
         self.stackedWidget.setCurrentWidget(self.changeFilamentExtrudePage)
-        octopiclient.gcode("G91")
-        octopiclient.gcode("G1 E1000 F4000")
-        octopiclient.gcode("G1 E500 F2000")
-        octopiclient.gcode("G90")
+        for i in range(5):
+            octopiclient.gcode("G91")
+            octopiclient.gcode("G1 E300 F1500")
+            octopiclient.gcode("G90")
+            time.sleep(self.calcExtrudeTime(300, 1500))
+
         while self.stackedWidget.currentWidget() == self.changeFilamentExtrudePage:
             octopiclient.gcode("G91")
             octopiclient.gcode("G1 E5 F400")
             octopiclient.gcode("G90")
-            time.sleep(3)
+            time.sleep(self.calcExtrudeTime(20, 600))
     @run_async
     def changeFilamentRetractFunction(self):
         '''
@@ -1356,14 +1502,24 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         '''
         self.stackedWidget.setCurrentWidget(self.changeFilamentRetractPage)
         octopiclient.gcode("G91")
-        octopiclient.gcode("G1 E-500 F1000")
-        octopiclient.gcode("G1 E-1000 F4000")
+        octopiclient.gcode("G1 E20 F1000")
+        time.sleep(self.calcExtrudeTime(20, 1000))
+        octopiclient.gcode("G1 E-20 F1000")
+        time.sleep(self.calcExtrudeTime(20, 1000))
+        octopiclient.gcode("G1 E-150 F500")
+        time.sleep(self.calcExtrudeTime(150, 500))
         octopiclient.gcode("G90")
+        for i in range(5):
+            octopiclient.gcode("G91")
+            octopiclient.gcode("G1 E-300 F1500")
+            octopiclient.gcode("G90")
+            time.sleep(self.calcExtrudeTime(300, 1500))
+											
         while self.stackedWidget.currentWidget() == self.changeFilamentRetractPage:
             octopiclient.gcode("G91")
-            octopiclient.gcode("G1 E-20 F4000")
+            octopiclient.gcode("G1 E-5 F1000")
             octopiclient.gcode("G90")
-            time.sleep(3)
+            time.sleep(self.calcExtrudeTime(5, 1000))
 
     def changeFilament(self):
         self.stackedWidget.setCurrentWidget(self.changeFilamentPage)
@@ -1562,53 +1718,56 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         :param temperature: dict containing key:value pairs with keys being the tools, bed and their values being their corresponding temperratures
         '''
 
-        if temperature['tool0Target'] == 0:
-            self.tool0TempBar.setMaximum(300)
-            self.tool0TempBar.setStyleSheet(styles.bar_heater_cold)
-        elif temperature['tool0Actual'] <= temperature['tool0Target']:
-            self.tool0TempBar.setMaximum(temperature['tool0Target'])
-            self.tool0TempBar.setStyleSheet(styles.bar_heater_heating)
-        else:
-            self.tool0TempBar.setMaximum(temperature['tool0Actual'])
-        self.tool0TempBar.setValue(temperature['tool0Actual'])
-        self.tool0ActualTemperature.setText(str(int(temperature['tool0Actual'])))  # + unichr(176)
-        self.tool0TargetTemperature.setText(str(int(temperature['tool0Target'])))
+        try:    
+            if temperature['tool0Target'] == 0:
+                self.tool0TempBar.setMaximum(300)
+                self.tool0TempBar.setStyleSheet(styles.bar_heater_cold)
+            elif temperature['tool0Actual'] <= temperature['tool0Target']:
+                self.tool0TempBar.setMaximum(temperature['tool0Target'])
+                self.tool0TempBar.setStyleSheet(styles.bar_heater_heating)
+            else:
+                self.tool0TempBar.setMaximum(temperature['tool0Actual'])
+            self.tool0TempBar.setValue(temperature['tool0Actual'])
+            self.tool0ActualTemperature.setText(str(int(temperature['tool0Actual'])))  # + unichr(176)
+            self.tool0TargetTemperature.setText(str(int(temperature['tool0Target'])))
 
-        if temperature['tool1Target'] == 0:
-            self.tool1TempBar.setMaximum(300)
-            self.tool1TempBar.setStyleSheet(styles.bar_heater_cold)
-        elif temperature['tool1Actual'] <= temperature['tool1Target']:
-            self.tool1TempBar.setMaximum(temperature['tool1Target'])
-            self.tool1TempBar.setStyleSheet(styles.bar_heater_heating)
-        else:
-            self.tool1TempBar.setMaximum(temperature['tool1Actual'])
-        self.tool1TempBar.setValue(temperature['tool1Actual'])
-        self.tool1ActualTemperature.setText(str(int(temperature['tool1Actual'])))  # + unichr(176)
-        self.tool1TargetTemperature.setText(str(int(temperature['tool1Target'])))
+            if temperature['tool1Target'] == 0:
+                self.tool1TempBar.setMaximum(300)
+                self.tool1TempBar.setStyleSheet(styles.bar_heater_cold)
+            elif temperature['tool1Actual'] <= temperature['tool1Target']:
+                self.tool1TempBar.setMaximum(temperature['tool1Target'])
+                self.tool1TempBar.setStyleSheet(styles.bar_heater_heating)
+            else:
+                self.tool1TempBar.setMaximum(temperature['tool1Actual'])
+            self.tool1TempBar.setValue(temperature['tool1Actual'])
+            self.tool1ActualTemperature.setText(str(int(temperature['tool1Actual'])))  # + unichr(176)
+            self.tool1TargetTemperature.setText(str(int(temperature['tool1Target'])))
 
-        if temperature['bedTarget'] == 0:
-            self.bedTempBar.setMaximum(150)
-            self.bedTempBar.setStyleSheet(styles.bar_heater_cold)
-        elif temperature['bedActual'] <= temperature['bedTarget']:
-            self.bedTempBar.setMaximum(temperature['bedTarget'])
-            self.bedTempBar.setStyleSheet(styles.bar_heater_heating)
-        else:
-            self.bedTempBar.setMaximum(temperature['bedActual'])
-        self.bedTempBar.setValue(temperature['bedActual'])
-        self.bedActualTemperatute.setText(str(int(temperature['bedActual'])))  # + unichr(176))
-        self.bedTargetTemperature.setText(str(int(temperature['bedTarget'])))  # + unichr(176))
+            if temperature['bedTarget'] == 0:
+                self.bedTempBar.setMaximum(150)
+                self.bedTempBar.setStyleSheet(styles.bar_heater_cold)
+            elif temperature['bedActual'] <= temperature['bedTarget']:
+                self.bedTempBar.setMaximum(temperature['bedTarget'])
+                self.bedTempBar.setStyleSheet(styles.bar_heater_heating)
+            else:
+                self.bedTempBar.setMaximum(temperature['bedActual'])
+            self.bedTempBar.setValue(temperature['bedActual'])
+            self.bedActualTemperatute.setText(str(int(temperature['bedActual'])))  # + unichr(176))
+            self.bedTargetTemperature.setText(str(int(temperature['bedTarget'])))  # + unichr(176))
 
-        if temperature['chamberTarget'] == 0:
-            self.chamberTempBar.setMaximum(70)
-            self.chamberTempBar.setStyleSheet(styles.bar_heater_cold)
-        elif temperature['chamberActual'] <= temperature['chamberTarget']:
-            self.chamberTempBar.setMaximum(temperature['chamberTarget'])
-            self.chamberTempBar.setStyleSheet(styles.bar_heater_heating)
-        else:
-            self.chamberTempBar.setMaximum(temperature['chamberActual'])
-        self.chamberTempBar.setValue(temperature['chamberActual'])
-        self.chamberActualTemperatute.setText(str(int(temperature['chamberActual'])))  # + unichr(176))
-        self.chamberTargetTemperature.setText(str(int(temperature['chamberTarget'])))  # + unichr(176))
+            if temperature['chamberTarget'] == 0:
+                self.chamberTempBar.setMaximum(70)
+                self.chamberTempBar.setStyleSheet(styles.bar_heater_cold)
+            elif temperature['chamberActual'] <= temperature['chamberTarget']:
+                self.chamberTempBar.setMaximum(temperature['chamberTarget'])
+                self.chamberTempBar.setStyleSheet(styles.bar_heater_heating)
+            else:
+                self.chamberTempBar.setMaximum(temperature['chamberActual'])
+            self.chamberTempBar.setValue(temperature['chamberActual'])
+            self.chamberActualTemperatute.setText(str(int(temperature['chamberActual'])))  # + unichr(176))
+            self.chamberTargetTemperature.setText(str(int(temperature['chamberTarget'])))  # + unichr(176))
+        except:
+            pass
 
         # updates the progress bar on the change filament screen
         if self.changeFilamentHeatingFlag:
@@ -1736,7 +1895,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             self.changeFilamentButton.setDisabled(False)
             self.menuCalibrateButton.setDisabled(True)
             self.menuPrintButton.setDisabled(True)
-            self.doorLockButton.setDisabled(True)
+            self.doorLockButton.setDisabled(False)
 
         else:
             self.stopButton.setDisabled(True)
@@ -1758,9 +1917,11 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         if self.toolToggleChangeFilamentButton.isChecked():
             self.setActiveExtruder(1)
             octopiclient.selectTool(1)
+            time.sleep(1)
         else:
             self.setActiveExtruder(0)
             octopiclient.selectTool(0)
+            time.sleep(1)
 
     def selectToolMotion(self):
         '''
@@ -1894,10 +2055,10 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         #fuck you past vijay for not cleaning this up
         try:
             if self.setNewToolZOffsetFromCurrentZBool:
-                newToolOffsetZ = float(self.toolOffsetZ) - float(self.currentZPosition)
+                newToolOffsetZ = float(self.toolOffsetZ) + float(self.currentZPosition)
                 octopiclient.gcode(command='M218 T1 Z{}'.format(newToolOffsetZ))  # restore eeprom settings to get Z home offset, mesh bed leveling back
                 self.setNewToolZOffsetFromCurrentZBool =False
-                octopiclient.gcode(command='M500')  # store eeprom settings to get Z home offset, mesh bed leveling back
+                octopiclient.gcode(command='SAVE_CONFIG')  # store eeprom settings to get Z home offset, mesh bed leveling back
         except Exception as e:
                     print("error: " + str(e))
 
@@ -1911,7 +2072,8 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         :param offset:
         :return:
         '''
-        self.nozzleOffsetDoubleSpinBox.setValue(float(offset))
+        self.currentNozzleOffset.setText(str(float(offset)))
+        self.nozzleOffsetDoubleSpinBox.setValue(0)
 
     def setZProbeOffset(self, offset):
         '''
@@ -1920,7 +2082,10 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         #TODO can make this simpler, asset the offset value to string float to begin with instead of doing confitionals
         '''
 
-        octopiclient.gcode(command='M851 Z{}'.format(offset))
+        octopiclient.gcode(command='M851 Z{}'.format(round(float(offset),2))) #M851 only ajusts nozzle offset
+        self.nozzleOffsetDoubleSpinBox.setValue(0)
+        _offset=float(self.currentNozzleOffset.text())+float(offset)
+        self.currentNozzleOffset.setText(str(float(self.currentNozzleOffset.text())-float(offset))) # show nozzle offset after adjustment
         octopiclient.gcode(command='M500')
 
     def requestEEPROMProbeOffset(self):
@@ -1948,26 +2113,26 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         self.stackedWidget.setCurrentWidget(self.toolOffsetZpage)
 
     def setToolOffsetX(self):
-        octopiclient.gcode(command='M218 T1 X{}'.format(self.toolOffsetXDoubleSpinBox.value()))  # restore eeprom settings to get Z home offset, mesh bed leveling back
+        octopiclient.gcode(command='M218 T1 X{}'.format(round(self.toolOffsetXDoubleSpinBox.value(),2)))  # restore eeprom settings to get Z home offset, mesh bed leveling back
         octopiclient.gcode(command='M500')
 
     def setToolOffsetY(self):
-        octopiclient.gcode(command='M218 T1 Y{}'.format(self.toolOffsetYDoubleSpinBox.value()))  # restore eeprom settings to get Z home offset, mesh bed leveling back
+        octopiclient.gcode(command='M218 T1 Y{}'.format(round(self.toolOffsetYDoubleSpinBox.value(),2)))  # restore eeprom settings to get Z home offset, mesh bed leveling back
         octopiclient.gcode(command='M500')
         octopiclient.gcode(command='M500')
 
     def setToolOffsetZ(self):
-        octopiclient.gcode(command='M218 T1 Z{}'.format(self.toolOffsetZDoubleSpinBox.value()))  # restore eeprom settings to get Z home offset, mesh bed leveling back
+        octopiclient.gcode(command='M218 T1 Z{}'.format(round(self.toolOffsetZDoubleSpinBox.value(),2)))  # restore eeprom settings to get Z home offset, mesh bed leveling back
         octopiclient.gcode(command='M500')
 
     def getToolOffset(self, M218Data):
-        if float(M218Data[M218Data.index('X') + 1:].split(' ', 1)[0] ) > 0:
-            self.toolOffsetZ = M218Data[M218Data.index('Z') + 1:].split(' ', 1)[0]
-            self.toolOffsetX = M218Data[M218Data.index('X') + 1:].split(' ', 1)[0]
-            self.toolOffsetY = M218Data[M218Data.index('Y') + 1:].split(' ', 1)[0]
-            self.toolOffsetXDoubleSpinBox.setValue(float(self.toolOffsetX))
-            self.toolOffsetYDoubleSpinBox.setValue(float(self.toolOffsetY))
-            self.toolOffsetZDoubleSpinBox.setValue(float(self.toolOffsetZ))
+        #if float(M218Data[M218Data.index('X') + 1:].split(' ', 1)[0] ) > 0:
+        self.toolOffsetZ = M218Data[M218Data.index('Z') + 1:].split(' ', 1)[0]
+        self.toolOffsetX = M218Data[M218Data.index('X') + 1:].split(' ', 1)[0]
+        self.toolOffsetY = M218Data[M218Data.index('Y') + 1:].split(' ', 1)[0]
+        self.toolOffsetXDoubleSpinBox.setValue(float(self.toolOffsetX))
+        self.toolOffsetYDoubleSpinBox.setValue(float(self.toolOffsetY))
+        self.toolOffsetZDoubleSpinBox.setValue(float(self.toolOffsetZ))
 
     def quickStep1(self):
         '''
@@ -1977,11 +2142,11 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         :return:
         '''
         self.toolZOffsetCaliberationPageCount = 0
-        octopiclient.gcode(command='M104 S0') # BEFORE S200
-        octopiclient.gcode(command='M104 T1 S0') # BEFORE M104 T1 S200
+        octopiclient.gcode(command='M104 S200') # BEFORE S200
+        octopiclient.gcode(command='M104 T1 S200') # BEFORE M104 T1 S200
         #octopiclient.gcode(command='M211 S0')  # Disable software endstop
         octopiclient.gcode(command='T0')  # Set active tool to t0
-        #octopiclient.gcode(command='M503')  # makes sure internal value of Z offset and Tool offsets are stored before erasing
+        octopiclient.gcode(command='M503')  # makes sure internal value of Z offset and Tool offsets are stored before erasing
         octopiclient.gcode(command='M420 S0')  # Dissable mesh bed leveling for good measure
         self.stackedWidget.setCurrentWidget(self.quickStep1Page)
         octopiclient.home(['x', 'y', 'z'])
@@ -1993,7 +2158,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         :return:
         '''
         self.stackedWidget.setCurrentWidget(self.quickStep2Page)
-        octopiclient.jog(x=calibrationPosition['X1'], y=calibrationPosition['Y1'], absolute=True, speed=2000)
+        octopiclient.jog(x=calibrationPosition['X1'], y=calibrationPosition['Y1'], absolute=True, speed=10000)
         octopiclient.jog(z=0, absolute=True, speed=1500)
 
     def quickStep3(self):
@@ -2002,7 +2167,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         '''
         self.stackedWidget.setCurrentWidget(self.quickStep3Page)
         octopiclient.jog(z=10, absolute=True, speed=1500)
-        octopiclient.jog(x=calibrationPosition['X2'], y=calibrationPosition['Y2'], absolute=True, speed=2000)
+        octopiclient.jog(x=calibrationPosition['X2'], y=calibrationPosition['Y2'], absolute=True, speed=10000)
         octopiclient.jog(z=0, absolute=True, speed=1500)
 
     def quickStep4(self):
@@ -2013,7 +2178,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         # sent twice for some reason
         self.stackedWidget.setCurrentWidget(self.quickStep4Page)
         octopiclient.jog(z=10, absolute=True, speed=1500)
-        octopiclient.jog(x=calibrationPosition['X3'], y=calibrationPosition['Y3'], absolute=True, speed=2000)
+        octopiclient.jog(x=calibrationPosition['X3'], y=calibrationPosition['Y3'], absolute=True, speed=10000)
         octopiclient.jog(z=0, absolute=True, speed=1500)
 
     # def quickStep5(self):
@@ -2024,24 +2189,24 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
     #     octopiclient.jog(z=15, absolute=True, speed=1500)
     #     octopiclient.gcode(command='M272 S')
 
-    #def nozzleHeightStep1(self):
-    #    if self.toolZOffsetCaliberationPageCount == 0 :
-    #        self.toolZOffsetLabel.setText("Move the bed up or down to the First Nozzle , testing height using paper")
-    #        self.stackedWidget.setCurrentWidget(self.nozzleHeightStep1Page)
-    #        octopiclient.jog(z=10, absolute=True, speed=1500)
-    #        octopiclient.jog(x=calibrationPosition['X4'], y=calibrationPosition['Y4'], absolute=True, speed=2000)
-    #        octopiclient.jog(z=1, absolute=True, speed=1500)
-    #        self.toolZOffsetCaliberationPageCount = 1
-    #    elif self.toolZOffsetCaliberationPageCount == 1:
-    #        self.toolZOffsetLabel.setText("Move the bed up or down to the Second Nozzle , testing height using paper")
-    #        octopiclient.gcode(command='G92 Z0')#set the current Z position to zero
-    #        octopiclient.jog(z=1, absolute=True, speed=1500)
-    #        octopiclient.gcode(command='T1')
-    #        octopiclient.jog(x=calibrationPosition['X4'], y=calibrationPosition['Y4'], absolute=True, speed=2000)
+    def nozzleHeightStep1(self):
+       if self.toolZOffsetCaliberationPageCount == 0 :
+           self.toolZOffsetLabel.setText("Move the bed up or down to the First Nozzle , testing height using paper")
+           self.stackedWidget.setCurrentWidget(self.nozzleHeightStep1Page)
+           octopiclient.jog(z=10, absolute=True, speed=1500)
+           octopiclient.jog(x=calibrationPosition['X4'], y=calibrationPosition['Y4'], absolute=True, speed=10000)
+           octopiclient.jog(z=1, absolute=True, speed=1500)
+           self.toolZOffsetCaliberationPageCount = 1
+       elif self.toolZOffsetCaliberationPageCount == 1:
+           self.toolZOffsetLabel.setText("Move the bed up or down to the Second Nozzle , testing height using paper")
+           octopiclient.gcode(command='G92 Z0')#set the current Z position to zero
+           octopiclient.jog(z=1, absolute=True, speed=1500)
+           octopiclient.gcode(command='T1')
+           octopiclient.jog(x=calibrationPosition['X4'], y=calibrationPosition['Y4'], absolute=True, speed=10000)
 
-    #        self.toolZOffsetCaliberationPageCount = 2
-    #    else:
-    #        self.doneStep()
+           self.toolZOffsetCaliberationPageCount = 2
+       else:
+           self.doneStep()
 
     def doneStep(self):
         '''
@@ -2134,6 +2299,14 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
     def restorePrintDefaults(self):
         if dialog.WarningYesNo(self, "Are you sure you want to restore default print settings?\nWarning: Doing so will erase offsets and bed leveling info",
                                overlay=True):
+            os.system('sudo cp -f firmware/GCodes.cfg /home/pi/GCodes.cfg')
+            print("copied Gcodes")
+            os.system('sudo cp -f firmware/IDEX_mode.cfg /home/pi/IDEX_mode.cfg')
+            print("copied idex mode")
+            os.system('sudo cp -f firmware/printer.cfg /home/pi/printer.cfg')
+            print("copied printer cfg")
+            os.system('sudo cp -f firmware/variables.cfg /home/pi/variables.cfg')
+            print("copied variables")
             octopiclient.gcode(command='M502')
             octopiclient.gcode(command='M500')
 
@@ -2151,10 +2324,10 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             return True
         return False
 
-    def handleStartupError(self):
-        print('Shutting Down. Unable to connect')
-        if dialog.WarningOk(self, "Error. Contact Support. Shutting down...", overlay=True):
-            os.system('sudo shutdown now')
+    # def handleStartupError(self):
+    #     print('Shutting Down. Unable to connect')
+    #     if dialog.WarningOk(self, "Error. Contact Support. Shutting down...", overlay=True):
+    #         os.system('sudo shutdown now')
 
     def pairPhoneApp(self):
         if getIP(ThreadRestartNetworking.ETH) is not None:
@@ -2165,7 +2338,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             if dialog.WarningOk(self, "Network Disconnected"):
                 return
         self.QRCodeLabel.setPixmap(
-            qrcode.make(json.dumps(qrip), image_factory=Image).pixmap())
+            qrcode.make("http://"+ qrip, image_factory=Image).pixmap())
         self.stackedWidget.setCurrentWidget(self.QRCodePage)
 
 
@@ -2284,7 +2457,7 @@ class QtWebsocket(QtCore.QThread):
                     #     self.emit(QtCore.SIGNAL('SET_Z_HOME_OFFSET'), item[item.index('Z') + 2:].split(' ', 1)[0],
                     #               False)
                     if 'Count' in item:  # can get thris throught the positionUpdate event
-                        self.set_z_tool_offset_signal.emit(item[item.index('z') + 2:].split(',', 1)[0], # klipper update for M114
+                        self.set_z_tool_offset_signal.emit(item[item.index('z') + 2:].split(',', 1)[0],
                                   False)
                     if 'M218' in item:
                         self.tool_offset_signal.emit(item[item.index('M218'):])
@@ -2324,12 +2497,13 @@ class QtWebsocket(QtCore.QThread):
                                     'chamberActual': temp(data, "chamber", "actual"),
                                     'chamberTarget': temp(data, "chamber", "target")
                                     }
-                    for key, value in temperatures.items():
-                        if value is None:
-                            temperatures[key] = 0
+                    # for key, value in temperatures.items():
+                    #     if value is None:
+                    #         temperatures[key] = 0
                     self.temperatures_signal.emit(temperatures)
-                except Exception as e:
-                    print("error: " + str(e))
+                except KeyError:
+                    pass
+                    #print("error: " + str(e))
 
     def on_open(self,ws):
         self.authenticate()
@@ -2363,34 +2537,38 @@ class ThreadSanityCheck(QtCore.QThread):
         while (True):
             # Start an object instance of octopiAPI
             try:
-                if (uptime > 30):
+                if (uptime > 60):
                     self.shutdown_flag = True
                     self.startup_error_signal.emit()
                     break
                 octopiclient = octoprintAPI(ip, apiKey)
                 if not self.virtual:
-                    result = subprocess.Popen("dmesg | grep 'ttyACM\|ttyUSB'", stdout=subprocess.PIPE, shell=True).communicate()[0]
-                    result = result.split(b'\n')
-                    print(result)
-                    result = [s.strip() for s in result]
-                    for line in result:
-                        if b'FTDI' in line:
-                            # self.MKSPort = line[line.index(b'ttyUSB'):line.index(b'tty3') + 7].decode('utf-8')
-                            # print(self.MKSPort)
-                            self.klipperMCUConnected = True
-                        if b'ch34' in line:
-                            # self.MKSPort = line[line.index(b'ttyUSB'):line.index(b'tty3') + 7].decode('utf-8')
-                            # print(self.MKSPort)
-                            self.klipperMCUConnected = True
-                        if b'ACM' in line:
-                            self.klipperMCUConnected = True
+                    # result = subprocess.Popen("dmesg | grep 'ttyACM\|ttyUSB'", stdout=subprocess.PIPE, shell=True).communicate()[0]
+                    # result = result.split(b'\n')
+                    # print(result)
+                    # result = [s.strip() for s in result]
+                    # for line in result:
+                    #     if b'FTDI' in line:
+                    #         # self.MKSPort = line[line.index(b'ttyUSB'):line.index(b'tty3') + 7].decode('utf-8')
+                    #         # print(self.MKSPort)
+                    #         self.klipperMCUConnected = True
+                    #     if b'ch34' in line:
+                    #         # self.MKSPort = line[line.index(b'ttyUSB'):line.index(b'tty3') + 7].decode('utf-8')
+                    #         # print(self.MKSPort)
+                    #         self.klipperMCUConnected = True
+                    #     if b'ACM' in line:
+                    #         self.klipperMCUConnected = True
 
-                    if not self.klipperMCUConnected:
-                        octopiclient.connectPrinter(port="VIRTUAL", baudrate=115200)
-                    else:
-                        octopiclient.connectPrinter(port="/tmp/printer", baudrate=250000)
+                    # if not self.klipperMCUConnected:
+                    #     octopiclient.connectPrinter(port="VIRTUAL", baudrate=115200)
+                    # else:
+                    #     octopiclient.connectPrinter(port="/tmp/printer", baudrate=250000)
                     # else:
                     #     octopiclient.connectPrinter(port="/dev/" + self.MKSPort, baudrate=115200)
+                    try:
+                        octopiclient.connectPrinter(port="/tmp/printer", baudrate=115200)
+                    except Exception as e:
+                        octopiclient.connectPrinter(port="VIRTUAL", baudrate=115200)
                 break
             except Exception as e:
                 time.sleep(1)

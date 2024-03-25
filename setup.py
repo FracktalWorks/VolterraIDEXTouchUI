@@ -23,7 +23,7 @@ plugin_version = versioneer.get_version()   # replaced by versioneer
 plugin_description = """TouchScreen Plugin for Volterra Idex 2023 """
 
 # The plugin's author. Can be overwritten within OctoPrint's internal data via __plugin_author__ in the plugin module
-plugin_author = "sivasanthosh"
+plugin_author = "Fracktal Works Pvt Ltd"
 
 # The plugin's author's mail address.
 plugin_author_email = "support@fracktal.in"
