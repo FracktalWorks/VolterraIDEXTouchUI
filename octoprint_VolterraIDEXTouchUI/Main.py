@@ -1522,6 +1522,10 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             time.sleep(self.calcExtrudeTime(5, 1000))
 
     def changeFilament(self):
+        time.sleep(1)
+        if self.printerStatusText not in ["Printing","Paused"]:
+            octopiclient.gcode("G28")
+
         self.stackedWidget.setCurrentWidget(self.changeFilamentPage)
         self.changeFilamentComboBox.clear()
         self.changeFilamentComboBox.addItems(filaments.keys())
@@ -2055,7 +2059,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         #fuck you past vijay for not cleaning this up
         try:
             if self.setNewToolZOffsetFromCurrentZBool:
-                newToolOffsetZ = float(self.toolOffsetZ) + float(self.currentZPosition)
+                newToolOffsetZ = (float(self.toolOffsetZ) + float(self.currentZPosition))
                 octopiclient.gcode(command='M218 T1 Z{}'.format(newToolOffsetZ))  # restore eeprom settings to get Z home offset, mesh bed leveling back
                 self.setNewToolZOffsetFromCurrentZBool =False
                 octopiclient.gcode(command='SAVE_CONFIG')  # store eeprom settings to get Z home offset, mesh bed leveling back
@@ -2309,6 +2313,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             print("copied variables")
             octopiclient.gcode(command='M502')
             octopiclient.gcode(command='M500')
+            octopiclient.gcode(command='FIRMWARE_RESTART')
 
     ''' +++++++++++++++++++++++++++++++++++ Misc ++++++++++++++++++++++++++++++++ '''
 
@@ -2483,6 +2488,7 @@ class QtWebsocket(QtCore.QThread):
                     if tool in data["current"]["temps"][0]:
                         return data["current"]["temps"][0][tool][temp]
                 except Exception as e:
+                    pass
                     print("Temperature error: " + str(e))
                 return 0
 
