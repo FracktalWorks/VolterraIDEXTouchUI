@@ -201,8 +201,8 @@ background-color: rgb(40, 40, 40);</string>
      <widget class="QLabel" name="loadingGif">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>130</y>
+        <x>20</x>
+        <y>320</y>
         <width>441</width>
         <height>391</height>
        </rect>
@@ -262,7 +262,7 @@ background-color: rgba(255, 255, 255, 0);</string>
        <string/>
       </property>
       <property name="pixmap">
-       <pixmap>../../TwinDragon600CM4TouchUI/octoprint_TwinDragon600CM4TouchUI/templates/img/Fracktal Logo.png</pixmap>
+       <pixmap>templates/img/Fracktal Logo.png</pixmap>
       </property>
       <property name="scaledContents">
        <bool>true</bool>
