@@ -504,6 +504,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             self.stackedWidget.setCurrentWidget(self.homePage)
         self.isFilamentSensorInstalled()
         self.onServerConnected()
+        self.checkKlipperPrinterCFG()
 
     def setActions(self):
 
@@ -1558,6 +1559,7 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         '''
         if self.printerStatusText == "Operational":
             if self.playPauseButton.isChecked:
+                self.checkKlipperPrinterCFG()
                 octopiclient.startPrint()
         elif self.printerStatusText == "Printing":
             octopiclient.pausePrint()
@@ -1699,8 +1701,10 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
         '''
         Prints the file selected from printSelected()
         '''
+        octopiclient.home(['x', 'y', 'z'])
         octopiclient.selectFile(self.fileListWidget.currentItem().text(), True)
         # octopiclient.startPrint()
+        self.checkKlipperPrinterCFG()
         self.stackedWidget.setCurrentWidget(self.homePage)
 
     def deleteItem(self):
@@ -2328,6 +2332,56 @@ class MainUiClass(QtWidgets.QMainWindow, mainGUI.Ui_MainWindow):
             os.system('sudo reboot now')
             return True
         return False
+    
+    def checkKlipperPrinterCFG(self):
+        '''
+        Checks for valid printer.cfg and restores if needed
+        '''
+
+        # Open the printer.cfg file:
+        try:
+            with open('/home/pi/printer.cfg', 'r') as currentConfigFile:
+                currentConfig = currentConfigFile.read()
+                if "# MCU Config" in currentConfig:
+                    configCorruptedFlag = False
+                    print("Printer Config File OK")
+                else:
+                    configCorruptedFlag = True
+                    print("Printer Config File Corrupted")
+        except:
+            configCorruptedFlag = True
+            print("Printer Config File Not Found")
+
+        if configCorruptedFlag:
+            backupFiles = sorted(glob.glob('/home/pi/printer-*.cfg'), key=os.path.getmtime, reverse=True)
+            print("\n".join(backupFiles))
+            for backupFile in backupFiles:
+                with open(str(backupFile), 'r') as backupConfigFile:
+                    backupConfig = backupConfigFile.read()
+                    if "# MCU Config" in backupConfig:
+                        try:
+                            os.remove('/home/pi/printer.cfg')
+                        except:
+                            print("Files does not exist for deletion")
+                        try:
+                            os.rename(backupFile, '/home/pi/printer.cfg')
+                            print("Printer Config File Restored")
+                            return()
+                        except:
+                            pass
+            # If no valid backups found, show error dialog:
+            dialog.WarningOk(self, "Printer Config File corrupted. Contact Fracktal support or raise a ticket at care.fracktal.in")
+            print("Printer Config File corrupted. Contact Fracktal support or raise a ticket at care.fracktal.in")
+            if self.printerStatus == "Printing":
+                octopiclient.cancelPrint()
+                self.coolDownAction()
+        elif not configCorruptedFlag:
+            backupFiles = sorted(glob.glob('/home/pi/printer-*.cfg'), key=os.path.getmtime, reverse=True)
+            try:
+                for backupFile in backupFiles[5:]:
+                    os.remove(backupFile)
+            except:
+                pass
 
     # def handleStartupError(self):
     #     print('Shutting Down. Unable to connect')
